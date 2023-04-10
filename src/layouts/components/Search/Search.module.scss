@@ -1,0 +1,33 @@
+.wrapper {
+	display: flex;
+	align-items: center;
+	margin: 0 24px;
+	position: relative;
+}
+
+.input {
+	width: 350px;
+	max-width: 100%;
+	border-radius: 99px;
+	padding: 10px 16px 10px 40px;
+	border: none;
+	background-color: var(--bg-gray);
+
+	&:focus {
+		box-shadow: none;
+		border: 1px solid #0077fa80;
+	}
+}
+
+.icon {
+	position: absolute;
+	top: 50%;
+	left: 16px;
+	transform: translateY(-50%);
+	z-index: 1;
+	font-size: 16px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	color: rgb(107 112 117);
+}
