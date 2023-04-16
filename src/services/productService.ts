@@ -5,8 +5,13 @@ export const getProduct = async (slug: string) => {
 	return response?.data;
 };
 
-export const getProducts = async () => {
-	const response = await httpRequest.get(`/products`);
+export const getProducts = async (
+	_limit: number = 10,
+	_order: string = "asc",
+	_sort: string = "createdAt",
+	_page: number = 1
+) => {
+	const response = await httpRequest.get(`/products?_page=${_page}&_limit=${_limit}&_sort=${_sort}&_order=${_order}`);
 	return response?.data;
 };
 

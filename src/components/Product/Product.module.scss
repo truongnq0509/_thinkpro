@@ -5,14 +5,18 @@
 	border-radius: 12px;
 	overflow: hidden;
 	color: var(--text-black);
+	display: flex;
+	flex-direction: column;
 
 	&__img {
 		width: 100%;
 		height: 100%;
-		object-fit: none;
+		object-fit: contain;
+		flex: 1;
 	}
 
 	&__desc {
+		flex: 1;
 		padding: 16px;
 	}
 
@@ -20,6 +24,11 @@
 		color: var(--text-black);
 		font-size: 14px;
 		font-weight: 600;
+		width: 100%;
+		height: 46px;
+		overflow: hidden;
+		white-space: normal;
+		text-overflow: ellipsis;
 	}
 
 	&__price {
@@ -42,7 +51,7 @@
 	&__box {
 		display: flex;
 		align-items: flex-end;
-		margin-top: 4px;
+		margin-top: 12px;
 
 		span {
 			font-size: 12px;
@@ -72,7 +81,6 @@
 			display: inline-block;
 			width: 12px;
 			height: 12px;
-			background-color: var(--bg-red);
 			border-radius: 2px;
 			margin-left: 4px;
 		}
@@ -80,5 +88,14 @@
 
 	&__specs {
 		font-size: 12px;
+
+		span {
+			display: block;
+			width: 100%;
+			height: 18px;
+			overflow: hidden;
+			white-space: normal;
+			text-overflow: ellipsis;
+		}
 	}
 }

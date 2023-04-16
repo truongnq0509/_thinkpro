@@ -1,17 +1,30 @@
+@use "../../../components/GlobalStyles/GlobalStyles.module.scss" as screen;
+
 .wrapper {
 	display: flex;
 	align-items: center;
 	margin: 0 24px;
 	position: relative;
+
+	@include screen.xs {
+		margin: 0 8px;
+	}
 }
 
 .input {
-	width: 350px;
 	max-width: 100%;
 	border-radius: 99px;
 	padding: 10px 16px 10px 40px;
 	border: none;
 	background-color: var(--bg-gray);
+
+	@include screen.xs {
+		width: 180px;
+	}
+
+	@include screen.sm {
+		width: 300px;
+	}
 
 	&:focus {
 		box-shadow: none;

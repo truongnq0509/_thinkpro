@@ -1,20 +1,60 @@
+@use "../../../components/GlobalStyles/GlobalStyles.module.scss" as screen;
+
 .wrapper {
 	width: 100%;
 	background-color: var(--bg-white);
 }
 
 .content {
-	width: 1200px;
 	max-width: 100%;
 	margin: auto;
-	padding: 24px;
+
+	@include screen.xs {
+		width: 768px;
+		padding: 24px 16px;
+	}
+
+	@include screen.sm {
+		width: 768px;
+		padding: 24px 16px;
+	}
+
+	@include screen.md {
+		width: 768px;
+		padding: 24px 16px;
+	}
+
+	@include screen.lg {
+		width: 768px;
+		padding: 24px 16px;
+	}
+
+	@include screen.xl {
+		width: 1200px;
+		padding: 24px;
+	}
+
+	@include screen.xxl {
+		width: 1200px;
+		padding: 24px;
+	}
 }
 
 .section {
 	padding-top: 32px;
 
-	div > div > div > div > div > div {
-		height: 100%;
+	@include screen.md {
+		div > div > div > div > div > div {
+			height: 100%;
+			padding-bottom: 8px;
+		}
+	}
+
+	@include screen.lg {
+		div > div > div > div > div > div {
+			height: 100%;
+			padding-bottom: 8px;
+		}
 	}
 
 	h3 {
@@ -33,6 +73,7 @@
 		display: flex;
 		gap: 8px;
 		font-weight: 600;
+		margin-bottom: 16px;
 	}
 
 	&__title {
@@ -46,11 +87,13 @@
 		justify-content: space-between;
 
 		p {
+			flex: 1;
 			font-size: 14px;
 		}
 	}
 
 	&__content {
+		flex: 1;
 		display: inline-flex;
 		justify-content: space-between;
 		margin-top: 8px;

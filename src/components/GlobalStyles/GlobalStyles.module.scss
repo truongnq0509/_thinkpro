@@ -16,3 +16,40 @@
 	--bg-white: #fff;
 	--bg-gray: #f6f9fc;
 }
+
+// Tùy chỉnh theo tiêu chuẩn của thằng antd
+@mixin xs {
+	@media (max-width: 576px) {
+		@content;
+	}
+}
+
+@mixin sm {
+	@media (min-width: 576px) {
+		@content;
+	}
+}
+
+@mixin md {
+	@media (min-width: 768px) {
+		@content;
+	}
+}
+
+@mixin lg {
+	@media (min-width: 992px) {
+		@content;
+	}
+}
+
+@mixin xl {
+	@media (min-width: 1200px) {
+		@content;
+	}
+}
+
+@mixin xxl {
+	@media (min-width: 1600px) {
+		@content;
+	}
+}

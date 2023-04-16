@@ -4,7 +4,10 @@ export interface IProduct {
 	price?: number | string;
 	discount?: number;
 	slug?: string;
-	thumbnail?: string | object;
+	thumbnail?: {
+		path: string;
+		filename: string;
+	};
 	description?: string;
 	attributes?: [];
 	assets?: [];

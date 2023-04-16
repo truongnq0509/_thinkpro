@@ -3,7 +3,8 @@ import axios from "axios";
 const httpRequest = axios.create({
 	baseURL: import.meta.env.VITE_API_URL,
 	headers: {
-		Authorization: `Bearer ${JSON.parse(localStorage.getItem("user") as any).accessToken}`,
+		Authorization:
+			localStorage.getItem("user") && `Bearer ${JSON.parse(localStorage.getItem("user") as any)?.accessToken}`,
 	},
 });
 

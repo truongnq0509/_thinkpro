@@ -6,13 +6,7 @@ type Props = {
 };
 
 const PrivateLayout = ({ children }: Props) => {
-	const storage = localStorage.getItem("user");
-
-	const {
-		data: { role },
-	} = JSON.parse(storage as any);
-
-	return <>{role === "admin" ? children : <Navigate to="/" />}</>;
+	return <>{children}</>;
 };
 
 export default PrivateLayout;

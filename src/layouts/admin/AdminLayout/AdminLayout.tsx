@@ -1,7 +1,7 @@
 import React from "react";
 import type { MenuProps } from "antd";
-import { Layout, Menu, Input, Avatar, Space } from "antd";
-import { Outlet, Link } from "react-router-dom";
+import { Layout, Menu, Input, Avatar, Space, Button } from "antd";
+import { Outlet, Link, useNavigate } from "react-router-dom";
 import classNames from "classnames/bind";
 import styles from "./AdminLayout.module.scss";
 import { AiOutlineHome, AiOutlineLogout } from "react-icons/ai";
@@ -46,7 +46,18 @@ const items: MenuProps["items"] = [
 		null,
 		[
 			getItem(<Link to="/admin/settings">Settings</Link>, "5", <IoSettingsOutline size="18px" />),
-			getItem(<Link to="/logout">Logout</Link>, "6", <AiOutlineLogout size="18px" />),
+			getItem(
+				<Link
+					to="/"
+					onClick={() => {
+						localStorage.removeItem("user");
+					}}
+				>
+					Logout
+				</Link>,
+				"6",
+				<AiOutlineLogout size="18px" />
+			),
 		],
 		"group"
 	),

@@ -1,18 +1,29 @@
-import { Button, Space, Tag, Row, Col } from "antd";
+import { Button, Col, Row, Space } from "antd";
 import classNames from "classnames/bind";
-import React from "react";
+import React, { useEffect } from "react";
+import { AiOutlineShoppingCart, AiOutlineUser } from "react-icons/ai";
+import { GrFormNext, GrFormPrevious } from "react-icons/gr";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { A11y, Navigation, Pagination, Scrollbar } from "swiper";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/swiper.min.css";
+import { ICategory } from "~/interfaces";
+import { AppDispatch, RootState } from "~/store";
+import { getCategories } from "~/store/reducers/appSlice";
 import { Search } from "../Search";
 import styles from "./Header.module.scss";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { GrFormNext, GrFormPrevious } from "react-icons/gr";
-import { A11y, Navigation, Pagination, Scrollbar } from "swiper";
-
-import { AiOutlineUser, AiOutlineShoppingCart, AiFillFacebook, AiOutlineYoutube, AiOutlinePhone } from "react-icons/ai";
 
 const cx = classNames.bind(styles);
 
 const Header: React.FC = () => {
+	const { categories } = useSelector((state: RootState) => state.app);
+	const dispatch = useDispatch<AppDispatch>();
+
+	useEffect(() => {
+		dispatch(getCategories());
+	}, []);
+
 	return (
 		<>
 			<section className={cx("wrapper")}>
@@ -49,189 +60,57 @@ const Header: React.FC = () => {
 			<section className={cx("wrapper")}>
 				<nav className={cx("nav")}>
 					<Row>
-						<Col span="22">
+						<Col
+							xs={{ span: 18 }}
+							sm={{ span: 20 }}
+							md={{ span: 21 }}
+							lg={{ span: 21 }}
+							xl={{ span: 22 }}
+							xxl={{ span: 22 }}
+						>
 							<Swiper
 								// install Swiper modules
 								modules={[Navigation, Pagination, Scrollbar, A11y]}
-								spaceBetween={50}
-								slidesPerView={8}
+								spaceBetween={10}
+								slidesPerView="auto"
 								navigation={{
 									nextEl: `.${cx("next")}`,
 									prevEl: `.${cx("prev")}`,
 								}}
+								slidesPerGroup={3}
 							>
-								<SwiperSlide>
-									<div className={cx("nav__item")}>
-										<Link
-											to="/"
-											className={cx("nav__link")}
+								{categories?.map((category: ICategory) => {
+									return (
+										<SwiperSlide
+											key={category?._id}
+											style={{
+												width: "auto",
+											}}
 										>
-											<img
-												className={cx("nav__img")}
-												src="https://images.thinkgroup.vn/unsafe/96x96/https://media-api-beta.thinkpro.vn/media/core/categories/2022/3/22/Case-may-tinh-thinkpro.png"
-											/>
-											<p className={cx("nav__title")}>Laptop</p>
-										</Link>
-									</div>
-								</SwiperSlide>
-								<SwiperSlide>
-									<div className={cx("nav__item")}>
-										<Link
-											to="/"
-											className={cx("nav__link")}
-										>
-											<img
-												className={cx("nav__img")}
-												src="https://images.thinkgroup.vn/unsafe/96x96/https://media-api-beta.thinkpro.vn/media/core/categories/2022/3/22/Case-may-tinh-thinkpro.png"
-											/>
-											<p className={cx("nav__title")}>Laptop</p>
-										</Link>
-									</div>
-								</SwiperSlide>
-								<SwiperSlide>
-									<div className={cx("nav__item")}>
-										<Link
-											to="/"
-											className={cx("nav__link")}
-										>
-											<img
-												className={cx("nav__img")}
-												src="https://images.thinkgroup.vn/unsafe/96x96/https://media-api-beta.thinkpro.vn/media/core/categories/2022/3/22/Case-may-tinh-thinkpro.png"
-											/>
-											<p className={cx("nav__title")}>Laptop</p>
-										</Link>
-									</div>
-								</SwiperSlide>
-								<SwiperSlide>
-									<div className={cx("nav__item")}>
-										<Link
-											to="/"
-											className={cx("nav__link")}
-										>
-											<img
-												className={cx("nav__img")}
-												src="https://images.thinkgroup.vn/unsafe/96x96/https://media-api-beta.thinkpro.vn/media/core/categories/2022/3/22/Case-may-tinh-thinkpro.png"
-											/>
-											<p className={cx("nav__title")}>Laptop</p>
-										</Link>
-									</div>
-								</SwiperSlide>
-								<SwiperSlide>
-									<div className={cx("nav__item")}>
-										<Link
-											to="/"
-											className={cx("nav__link")}
-										>
-											<img
-												className={cx("nav__img")}
-												src="https://images.thinkgroup.vn/unsafe/96x96/https://media-api-beta.thinkpro.vn/media/core/categories/2022/3/22/Case-may-tinh-thinkpro.png"
-											/>
-											<p className={cx("nav__title")}>Laptop</p>
-										</Link>
-									</div>
-								</SwiperSlide>
-								<SwiperSlide>
-									<div className={cx("nav__item")}>
-										<Link
-											to="/"
-											className={cx("nav__link")}
-										>
-											<img
-												className={cx("nav__img")}
-												src="https://images.thinkgroup.vn/unsafe/96x96/https://media-api-beta.thinkpro.vn/media/core/categories/2022/3/22/Case-may-tinh-thinkpro.png"
-											/>
-											<p className={cx("nav__title")}>Laptop</p>
-										</Link>
-									</div>
-								</SwiperSlide>
-								<SwiperSlide>
-									<div className={cx("nav__item")}>
-										<Link
-											to="/"
-											className={cx("nav__link")}
-										>
-											<img
-												className={cx("nav__img")}
-												src="https://images.thinkgroup.vn/unsafe/96x96/https://media-api-beta.thinkpro.vn/media/core/categories/2022/3/22/Case-may-tinh-thinkpro.png"
-											/>
-											<p className={cx("nav__title")}>Laptop</p>
-										</Link>
-									</div>
-								</SwiperSlide>
-								<SwiperSlide>
-									<div className={cx("nav__item")}>
-										<Link
-											to="/"
-											className={cx("nav__link")}
-										>
-											<img
-												className={cx("nav__img")}
-												src="https://images.thinkgroup.vn/unsafe/96x96/https://media-api-beta.thinkpro.vn/media/core/categories/2022/3/22/Case-may-tinh-thinkpro.png"
-											/>
-											<p className={cx("nav__title")}>Laptop</p>
-										</Link>
-									</div>
-								</SwiperSlide>
-								<SwiperSlide>
-									<div className={cx("nav__item")}>
-										<Link
-											to="/"
-											className={cx("nav__link")}
-										>
-											<img
-												className={cx("nav__img")}
-												src="https://images.thinkgroup.vn/unsafe/96x96/https://media-api-beta.thinkpro.vn/media/core/categories/2022/3/22/Case-may-tinh-thinkpro.png"
-											/>
-											<p className={cx("nav__title")}>Laptop</p>
-										</Link>
-									</div>
-								</SwiperSlide>
-								<SwiperSlide>
-									<div className={cx("nav__item")}>
-										<Link
-											to="/"
-											className={cx("nav__link")}
-										>
-											<img
-												className={cx("nav__img")}
-												src="https://images.thinkgroup.vn/unsafe/96x96/https://media-api-beta.thinkpro.vn/media/core/categories/2022/3/22/Case-may-tinh-thinkpro.png"
-											/>
-											<p className={cx("nav__title")}>Laptop</p>
-										</Link>
-									</div>
-								</SwiperSlide>
-								<SwiperSlide>
-									<div className={cx("nav__item")}>
-										<Link
-											to="/"
-											className={cx("nav__link")}
-										>
-											<img
-												className={cx("nav__img")}
-												src="https://images.thinkgroup.vn/unsafe/96x96/https://media-api-beta.thinkpro.vn/media/core/categories/2022/3/22/Case-may-tinh-thinkpro.png"
-											/>
-											<p className={cx("nav__title")}>Laptop</p>
-										</Link>
-									</div>
-								</SwiperSlide>
-								<SwiperSlide>
-									<div className={cx("nav__item")}>
-										<Link
-											to="/"
-											className={cx("nav__link")}
-										>
-											<img
-												className={cx("nav__img")}
-												src="https://images.thinkgroup.vn/unsafe/96x96/https://media-api-beta.thinkpro.vn/media/core/categories/2022/3/22/Case-may-tinh-thinkpro.png"
-											/>
-											<p className={cx("nav__title")}>Laptop</p>
-										</Link>
-									</div>
-								</SwiperSlide>
+											<div className={cx("nav__item")}>
+												<Link
+													to={category?.slug as string}
+													className={cx("nav__link")}
+												>
+													<img
+														className={cx("nav__img")}
+														src={category?.image?.path as any}
+													/>
+													<p className={cx("nav__title")}>{category?.name}</p>
+												</Link>
+											</div>
+										</SwiperSlide>
+									);
+								})}
 							</Swiper>
 						</Col>
 						<Col
-							span="2"
+							xs={{ span: 6 }}
+							sm={{ span: 4 }}
+							md={{ span: 3 }}
+							lg={{ span: 3 }}
+							xl={{ span: 2 }}
+							xxl={{ span: 2 }}
 							style={{ display: "flex", alignItems: "center" }}
 						>
 							<Space

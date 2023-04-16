@@ -168,11 +168,10 @@ const Footer: React.FC = () => {
 				<section className={cx("store", "section")}>
 					<h3>Hệ thống cửa hàng</h3>
 					<List
-						grid={{ gutter: 16, column: 3 }}
+						grid={{ gutter: 16, xs: 1, sm: 1, md: 2, lg: 2, xl: 3, xxl: 3 }}
 						dataSource={stores}
-						style={{ height: "100%" }}
 						renderItem={(store) => (
-							<List.Item style={{ margin: 0, height: "100%" }}>
+							<List.Item>
 								<div className={cx("store__item")}>
 									<div
 										className={cx("store__title")}
@@ -210,11 +209,11 @@ const Footer: React.FC = () => {
 				<section className={cx("social", "section")}>
 					<h3>Thông tin hữu ích</h3>
 					<List
-						grid={{ gutter: 8, column: 4 }}
+						grid={{ gutter: 8, xs: 1, sm: 1, md: 3, lg: 3, xl: 4, xxl: 4 }}
 						dataSource={socials}
 						style={{ height: "100%" }}
 						renderItem={(social) => (
-							<List.Item style={{ marginBottom: "8px", height: "100%" }}>
+							<List.Item style={{ marginBottom: "6px", height: "100%" }}>
 								<Link
 									to={social.link}
 									className={cx("social__link")}
@@ -229,11 +228,11 @@ const Footer: React.FC = () => {
 				<section className={cx("network", "section")}>
 					<h3>ThinkPro trên social networks</h3>
 					<List
-						grid={{ gutter: 8, column: 7 }}
+						grid={{ gutter: 8, xs: 1, sm: 1, md: 3, lg: 6, xl: 6, xxl: 6 }}
 						dataSource={networks}
 						style={{ height: "100%" }}
 						renderItem={(network) => (
-							<List.Item style={{ margin: 0, height: "100%" }}>
+							<List.Item style={{ marginBottom: "6px", height: "100%" }}>
 								<Link
 									to={network.link}
 									className={cx("network__link")}

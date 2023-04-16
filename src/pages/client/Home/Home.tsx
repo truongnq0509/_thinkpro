@@ -15,8 +15,10 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import { Swiper, SwiperSlide } from "swiper/react";
 import styles from "./Home.module.scss";
-import { IProduct } from "~/interfaces";
-import { getProducts as apiGetProducts } from "~/services/productService";
+import { ICategory, IProduct } from "~/interfaces";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "~/store";
+import { getCategory } from "~/store/reducers/appSlice";
 
 const cx = classNames.bind(styles);
 
@@ -59,15 +61,18 @@ const data = [
 ];
 
 const HomePage: React.FC = () => {
-	const [products, setProducts] = useState<IProduct[]>([]);
+	const { products, categories } = useSelector((state: RootState) => state.app);
+	const dispatch = useDispatch<AppDispatch>();
+	const [slug, setSlug] = useState<string>("ban-phim");
 
 	useEffect(() => {
-		const fetchApi = async () => {
-			const response = await apiGetProducts();
-			setProducts(response?.data);
-		};
-		fetchApi();
+		dispatch(getCategory((categories[0]?.slug as string) || "ban-phim"));
 	}, []);
+
+	const handleClick = (slug: string) => {
+		setSlug(slug);
+		dispatch(getCategory(slug));
+	};
 
 	return (
 		<section className={cx("wrapper")}>
@@ -76,7 +81,14 @@ const HomePage: React.FC = () => {
 					gutter={[0, 0]}
 					style={{ height: "100%" }}
 				>
-					<Col span="8">
+					<Col
+						xs={0}
+						sm={0}
+						md={8}
+						lg={8}
+						xl={8}
+						xxl={8}
+					>
 						<div className={cx("content")}>
 							<h2>Giao diện mới, phục vụ bạn và người thân tốt hơn 💚💚💚</h2>
 							<p>
@@ -86,7 +98,14 @@ const HomePage: React.FC = () => {
 							</p>
 						</div>
 					</Col>
-					<Col span="16">
+					<Col
+						xs={24}
+						sm={24}
+						md={16}
+						lg={16}
+						xl={16}
+						xxl={16}
+					>
 						<img
 							src="https://images.thinkgroup.vn/unsafe/1600x600/https://media-api-beta.thinkpro.vn/media/core/categories/2023/3/16/329409720_776699303816616_5609673989706713871_n.jpeg"
 							className={cx("image")}
@@ -100,10 +119,10 @@ const HomePage: React.FC = () => {
 					<span>Là nơi để bạn và người thân tin tưởng lựa chọn</span>
 				</h2>
 				<List
-					grid={{ gutter: 24, column: 4 }}
+					grid={{ gutter: 24, xs: 1, sm: 1, md: 2, lg: 2, xl: 4, xxl: 4 }}
 					dataSource={data}
 					renderItem={(item) => (
-						<List.Item style={{ margin: 0 }}>
+						<List.Item style={{ height: "100%" }}>
 							<div className={cx("item")}>
 								<div className={cx("item__icon")}>{item.icon}</div>
 								<div className={cx("item__content")}>{item.content}</div>
@@ -116,126 +135,54 @@ const HomePage: React.FC = () => {
 			<section className={cx("suggestion")}>
 				<h2>Gợi ý cho bạn</h2>
 				<Row>
-					<Col span="22">
+					<Col
+						xs={{ span: 18 }}
+						sm={{ span: 20 }}
+						md={{ span: 21 }}
+						lg={{ span: 21 }}
+						xl={{ span: 22 }}
+						xxl={{ span: 22 }}
+					>
 						<Swiper
-							// install Swiper modules
 							modules={[Navigation, Pagination, Scrollbar, A11y]}
-							spaceBetween={0}
-							slidesPerView={11}
+							spaceBetween={10}
+							slidesPerView="auto"
 							navigation={{
 								nextEl: `.${cx("next")}`,
 								prevEl: `.${cx("prev")}`,
 							}}
 						>
-							<SwiperSlide>
-								<Link to="/">
-									<Button
-										size="large"
-										style={{
-											fontSize: "12px",
-											border: "none",
-											backgroundColor: "#fff",
-											fontWeight: 500,
-										}}
+							{categories?.map((category: ICategory) => {
+								return (
+									<SwiperSlide
+										key={category?._id}
+										style={{ width: "auto" }}
 									>
-										Điện Thoại
-									</Button>
-								</Link>
-							</SwiperSlide>
-							<SwiperSlide>
-								<Link to="/">
-									<Button
-										size="large"
-										style={{
-											fontSize: "12px",
-											border: "none",
-											backgroundColor: "#fff",
-											fontWeight: 500,
-										}}
-									>
-										Điện Thoại
-									</Button>
-								</Link>
-							</SwiperSlide>
-							<SwiperSlide>
-								<Link to="/">
-									<Button
-										size="large"
-										style={{
-											fontSize: "12px",
-											border: "none",
-											backgroundColor: "#fff",
-											fontWeight: 500,
-										}}
-									>
-										Điện Thoại
-									</Button>
-								</Link>
-							</SwiperSlide>
-							<SwiperSlide>
-								<Link to="/">
-									<Button
-										size="large"
-										style={{
-											fontSize: "12px",
-											border: "none",
-											backgroundColor: "#fff",
-											fontWeight: 500,
-										}}
-									>
-										Điện Thoại
-									</Button>
-								</Link>
-							</SwiperSlide>
-							<SwiperSlide>
-								<Link to="/">
-									<Button
-										size="large"
-										style={{
-											fontSize: "12px",
-											border: "none",
-											backgroundColor: "#fff",
-											fontWeight: 500,
-										}}
-									>
-										Điện Thoại
-									</Button>
-								</Link>
-							</SwiperSlide>
-							<SwiperSlide>
-								<Link to="/">
-									<Button
-										size="large"
-										style={{
-											fontSize: "12px",
-											border: "none",
-											backgroundColor: "#fff",
-											fontWeight: 500,
-										}}
-									>
-										Điện Thoại
-									</Button>
-								</Link>
-							</SwiperSlide>
-							<SwiperSlide>
-								<Link to="/">
-									<Button
-										size="large"
-										style={{
-											fontSize: "12px",
-											border: "none",
-											backgroundColor: "#fff",
-											fontWeight: 500,
-										}}
-									>
-										Điện Thoại
-									</Button>
-								</Link>
-							</SwiperSlide>
+										<Button
+											size="large"
+											style={{
+												fontSize: "12px",
+												border: "none",
+												fontWeight: 500,
+												background: category?.slug == slug ? "#0065ee1a" : "#fff",
+												color: category?.slug == slug ? "#0065ee" : "#333",
+											}}
+											onClick={() => handleClick(category?.slug as string)}
+										>
+											{category?.name}
+										</Button>
+									</SwiperSlide>
+								);
+							})}
 						</Swiper>
 					</Col>
 					<Col
-						span="2"
+						xs={{ span: 6 }}
+						sm={{ span: 4 }}
+						md={{ span: 3 }}
+						lg={{ span: 3 }}
+						xl={{ span: 2 }}
+						xxl={{ span: 2 }}
 						style={{ display: "flex", alignItems: "center" }}
 					>
 						<Space
@@ -260,10 +207,13 @@ const HomePage: React.FC = () => {
 					</Col>
 				</Row>
 				<List
-					grid={{ gutter: 16, column: 5 }}
+					grid={{ gutter: 12, xs: 1, sm: 2, md: 4, lg: 4, xl: 5, xxl: 5 }}
 					dataSource={products}
+					style={{
+						height: "100%",
+					}}
 					renderItem={(product: IProduct) => (
-						<List.Item>
+						<List.Item style={{ height: "100%" }}>
 							<Link to={`/products/${product?.slug}`}>
 								<Product product={product} />
 							</Link>

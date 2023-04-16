@@ -1,3 +1,5 @@
+@use "../../../components/GlobalStyles/GlobalStyles.module.scss" as screen;
+
 .wrapper {
 	width: 100%;
 	margin: auto;
@@ -10,8 +12,16 @@
 }
 
 .content {
-	width: 1200px;
-	max-width: 100%;
 	margin: auto;
 	padding: 32px 0;
+
+	@include screen.md {
+		width: 768px;
+		max-width: 100%;
+	}
+
+	@include screen.xl {
+		width: 1200px;
+		max-width: 100%;
+	}
 }

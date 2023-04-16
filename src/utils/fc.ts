@@ -28,3 +28,8 @@ export function buildFormData(data: any) {
 	}
 	return formData;
 }
+
+export function percent(price: number, discount: number) {
+	const percent = 1 - discount / price;
+	return `${Math.round(percent * 100)}%`;
+}
