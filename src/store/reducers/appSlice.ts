@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { IProduct, ICategory } from "~/interfaces";
+import { IProduct, ICategory, IBrand } from "~/interfaces";
 import { getCategories as apiGetCategories, getCategory as apiGetCategory } from "~/services/categoryService";
 
 export const getCategories = createAsyncThunk("category/getAll", async (_, thunkApi) => {

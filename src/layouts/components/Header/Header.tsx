@@ -13,6 +13,7 @@ import { AppDispatch, RootState } from "~/store";
 import { getCategories } from "~/store/reducers/appSlice";
 import { Search } from "../Search";
 import styles from "./Header.module.scss";
+import { getCategory } from "~/store/reducers/collectionSlice";
 
 const cx = classNames.bind(styles);
 
@@ -23,6 +24,8 @@ const Header: React.FC = () => {
 	useEffect(() => {
 		dispatch(getCategories());
 	}, []);
+
+	const handleClick = (slug: string) => dispatch(getCategory(slug));
 
 	return (
 		<>
@@ -91,6 +94,7 @@ const Header: React.FC = () => {
 												<Link
 													to={category?.slug as string}
 													className={cx("nav__link")}
+													onClick={() => handleClick(category?.slug as string)}
 												>
 													<img
 														className={cx("nav__img")}

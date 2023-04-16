@@ -5,7 +5,7 @@ import PrivateLayout from "~/layouts/private";
 // client
 import { DefaultLayout } from "~/layouts/client/DefaultLayout";
 import { HomePage } from "~/pages/client/Home";
-import { ProductsPage } from "~/pages/client/Products";
+import { CollectionPage } from "~/pages/client/Collection";
 import { NotFoundPage } from "~/pages/client/NotFound";
 import { LoginPage } from "~/pages/client/Login";
 import { RegisterPage } from "~/pages/client/Register";
@@ -31,14 +31,11 @@ const routes: RouteObject[] = [
 				element: <HomePage />,
 			},
 			{
-				path: "products",
+				path: ":slug",
 				children: [
 					{
 						index: true,
-						element: <ProductsPage />,
-					},
-					{
-						path: ":slug",
+						element: <CollectionPage />,
 					},
 				],
 			},

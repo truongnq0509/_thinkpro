@@ -2,7 +2,10 @@ export interface IBrand {
 	_id?: string;
 	name?: string;
 	slug?: string;
-	image?: string;
+	image?: {
+		path: string;
+		filename: string;
+	};
 	children?: IBrand[];
 	description?: string;
 	createdAt?: string;

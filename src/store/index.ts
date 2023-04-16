@@ -1,8 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 import appReducer from "./reducers/appSlice";
+import collectionSlice from "./reducers/collectionSlice";
 
 const rootReducer = {
 	app: appReducer,
+	collection: collectionSlice,
 };
 
 const store = configureStore({
