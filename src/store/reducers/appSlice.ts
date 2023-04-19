@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { IProduct, ICategory, IBrand } from "~/interfaces";
+import { IQuery } from "~/interfaces/query";
 import { getCategories as apiGetCategories, getCategory as apiGetCategory } from "~/services/categoryService";
 
 export const getCategories = createAsyncThunk("category/getAll", async (_, thunkApi) => {
@@ -7,9 +8,9 @@ export const getCategories = createAsyncThunk("category/getAll", async (_, thunk
 	return response?.data;
 });
 
-export const getCategory = createAsyncThunk("category/getSingle", async (slug: string, thunkApi) => {
-	const response = await apiGetCategory(slug);
-	return response?.data?.products;
+export const getCategory = createAsyncThunk("category/getSingle", async (query: IQuery, thunkApi) => {
+	const response = await apiGetCategory(query);
+	return response?.data;
 });
 
 type initialStateType = {
@@ -42,9 +43,10 @@ const appSlice = createSlice({
 		builder.addCase(getCategory.pending, (state) => {
 			state.isLoading = true;
 		});
-		builder.addCase(getCategory.fulfilled, (state, action: PayloadAction<IProduct[]>) => {
+		builder.addCase(getCategory.fulfilled, (state, action) => {
+			const { products } = action.payload;
 			state.isLoading = false;
-			state.products = action.payload;
+			state.products = products;
 		});
 		builder.addCase(getCategory.rejected, (state) => {
 			state.isLoading = false;

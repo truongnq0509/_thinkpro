@@ -1,3 +1,4 @@
+@use "../../../components/GlobalStyles/GlobalStyles.module.scss" as screen;
 .wrapper {
 }
 
@@ -6,6 +7,18 @@
 	padding: 24px;
 	border-radius: 8px;
 	background-color: var(--bg-white);
+
+	@include screen.xs {
+		margin: 0 16px;
+	}
+
+	@include screen.sm {
+		margin: 0 16px;
+	}
+
+	@include screen.md {
+		margin: 0;
+	}
 
 	&__img {
 		img {
@@ -44,7 +57,17 @@
 }
 
 .products {
-	margin-top: 16px;
+	@include screen.xs {
+		margin: 0 16px;
+	}
+
+	@include screen.sm {
+		margin: 0 16px;
+	}
+
+	@include screen.md {
+		margin: 16px 0 0 0;
+	}
 
 	div > div > div > div > div {
 		height: calc(100% - 16px);
@@ -67,5 +90,47 @@
 		margin-top: 8px;
 		margin-bottom: 32px;
 		color: var(--text-black);
+	}
+}
+
+.filter {
+	@include screen.xs {
+		margin: 0 16px;
+		padding: 32px 0 16px 0;
+	}
+
+	@include screen.sm {
+		margin: 0 16px;
+		padding: 32px 0 16px 0;
+	}
+
+	@include screen.md {
+		margin: 0;
+		padding: 32px 0 0 0;
+	}
+
+	&__radio {
+		span {
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			font-size: 14px;
+		}
+	}
+
+	&__tooltip {
+		background-color: var(--bg-white);
+	}
+
+	&__btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: 20px 12px;
+		font-size: 12px;
+		font-weight: 600;
+		border: none;
+		background-color: var(--bg-white);
+		overflow: hidden;
 	}
 }

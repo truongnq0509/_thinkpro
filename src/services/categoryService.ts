@@ -1,7 +1,11 @@
 import * as httpRequest from "~/utils/httpRequest";
+import { IQuery } from "~/interfaces/query";
 
-export const getCategory = async (slug: string) => {
-	const response = await httpRequest.get(`/categories?slug=${slug}`);
+export const getCategory = async (query: IQuery) => {
+	const { slug, _page = 1, _order = "asc", _sort = "createdAt", _limit = 15 } = query;
+	const response = await httpRequest.get(
+		`/categories?slug=${slug}&_page=${_page}&_limit=${_limit}&_order=${_order}&_sort=${_sort}`
+	);
 	return response?.data;
 };
 

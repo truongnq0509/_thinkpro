@@ -2,14 +2,15 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { IProduct, ICategory, IBrand } from "~/interfaces";
 import { getCategory as apiGetCategory } from "~/services/categoryService";
 import { getBrand as apiGetBrand } from "~/services/brandService";
+import { IQuery } from "~/interfaces/query";
 
-export const getCategory = createAsyncThunk("category/getSingle", async (slug: string, thunkApi) => {
-	const response = await apiGetCategory(slug);
+export const getCategory = createAsyncThunk("category/getSingle", async (query: IQuery, thunkApi) => {
+	const response = await apiGetCategory(query);
 	return response?.data;
 });
 
-export const getBrand = createAsyncThunk("brand/getSingle", async (slug: string, thunkApi) => {
-	const response = await apiGetBrand(slug);
+export const getBrand = createAsyncThunk("brand/getSingle", async (query: IQuery, thunkApi) => {
+	const response = await apiGetBrand(query);
 	return response?.data;
 });
 
@@ -29,7 +30,7 @@ const initialState: initialStateType = {
 	isLoading: false,
 };
 
-const appSlice = createSlice({
+const collectionSlice = createSlice({
 	name: "collection",
 	initialState,
 	reducers: {},
@@ -52,11 +53,12 @@ const appSlice = createSlice({
 			state.isLoading = false;
 		});
 		builder.addCase(getBrand.fulfilled, (state, action) => {
-			const { name, image, description, products, children } = action.payload;
+			const { name, image, description, children, products } = action.payload;
 			state.brand = {
 				name,
 				image,
 				description,
+				children,
 			};
 			state.products = products;
 			state.brands = children;
@@ -65,4 +67,4 @@ const appSlice = createSlice({
 	},
 });
 
-export default appSlice.reducer;
+export default collectionSlice.reducer;

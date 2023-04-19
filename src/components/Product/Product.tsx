@@ -11,8 +11,6 @@ type Props = {
 
 const cx = classNames.bind(styles);
 
-const colors = ["#495057", "#fa5252", "#22b8cf", "#12b886", "#d3f9d8", "#f783ac"];
-
 const Product = ({ product }: Props) => {
 	const { thumbnail, name, price, discount, attributes } = product;
 
@@ -32,18 +30,11 @@ const Product = ({ product }: Props) => {
 				<div className={cx("product__colors")}>
 					<span>Màu</span>
 					<div className={cx("product__color")}>
-						{colors.map((color, index, origin) => {
-							if (index < Math.round(Math.random() * 2) + 1) {
-								return (
-									<span
-										key={index}
-										style={{
-											backgroundColor: colors[Math.ceil(Math.random() * origin.length) - 1],
-										}}
-									></span>
-								);
-							}
-						})}
+						<span
+							style={{
+								backgroundColor: "#495057",
+							}}
+						></span>
 					</div>
 				</div>
 				{(attributes?.length as any) > 0 && <hr className={cx("line")} />}

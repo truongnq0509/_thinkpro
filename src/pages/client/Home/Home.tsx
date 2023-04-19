@@ -156,12 +156,26 @@ const HomePage: React.FC = () => {
 	const [slug, setSlug] = useState<string>("ban-phim");
 
 	useEffect(() => {
-		dispatch(getCategory((categories[0]?.slug as string) || "ban-phim"));
+		dispatch(
+			getCategory({
+				slug,
+				_order: "asc",
+				_limit: "10",
+				_sort: "createdAt",
+			})
+		);
 	}, []);
 
 	const handleClick = (slug: string) => {
 		setSlug(slug);
-		dispatch(getCategory(slug));
+		dispatch(
+			getCategory({
+				slug,
+				_order: "desc",
+				_limit: "10",
+				_sort: "createdAt",
+			})
+		);
 	};
 
 	return (

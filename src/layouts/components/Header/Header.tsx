@@ -13,7 +13,6 @@ import { AppDispatch, RootState } from "~/store";
 import { getCategories } from "~/store/reducers/appSlice";
 import { Search } from "../Search";
 import styles from "./Header.module.scss";
-import { getCategory } from "~/store/reducers/collectionSlice";
 
 const cx = classNames.bind(styles);
 
@@ -25,18 +24,16 @@ const Header: React.FC = () => {
 		dispatch(getCategories());
 	}, []);
 
-	const handleClick = (slug: string) => dispatch(getCategory(slug));
-
 	return (
 		<>
 			<section className={cx("wrapper")}>
 				<header className={cx("header")}>
-					<a
+					<Link
 						className={cx("logo")}
-						href="#"
+						to="/"
 					>
 						<img src="https://media-api-beta.thinkpro.vn/media/core/site-configs/2023/3/16/logo-thinkpro.svg" />
-					</a>
+					</Link>
 					<Search />
 					<Space className={cx("cart")}>
 						<Link to="/login">
@@ -80,7 +77,7 @@ const Header: React.FC = () => {
 									nextEl: `.${cx("next")}`,
 									prevEl: `.${cx("prev")}`,
 								}}
-								slidesPerGroup={3}
+								slidesPerGroup={2}
 							>
 								{categories?.map((category: ICategory) => {
 									return (
@@ -93,8 +90,11 @@ const Header: React.FC = () => {
 											<div className={cx("nav__item")}>
 												<Link
 													to={category?.slug as string}
+													state={{
+														slug: category.slug,
+														isSlug: false,
+													}}
 													className={cx("nav__link")}
-													onClick={() => handleClick(category?.slug as string)}
 												>
 													<img
 														className={cx("nav__img")}
