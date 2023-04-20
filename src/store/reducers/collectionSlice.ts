@@ -19,7 +19,7 @@ type initialStateType = {
 	brand: IBrand;
 	brands: IBrand[];
 	products: IProduct[];
-	isLoading: boolean;
+	loading: boolean;
 };
 
 const initialState: initialStateType = {
@@ -27,7 +27,7 @@ const initialState: initialStateType = {
 	brand: {},
 	brands: [],
 	products: [],
-	isLoading: false,
+	loading: false,
 };
 
 const collectionSlice = createSlice({
@@ -36,11 +36,11 @@ const collectionSlice = createSlice({
 	reducers: {},
 	extraReducers: (builder) => {
 		builder.addCase(getCategory.pending, (state) => {
-			state.isLoading = true;
+			state.loading = true;
 		});
 		builder.addCase(getCategory.fulfilled, (state, action) => {
 			const { products, brands, name, description } = action.payload;
-			state.isLoading = false;
+			state.loading = false;
 			state.products = products;
 			state.brands = brands;
 			state.category = {
@@ -50,17 +50,21 @@ const collectionSlice = createSlice({
 			state.brand = {};
 		});
 		builder.addCase(getCategory.rejected, (state) => {
-			state.isLoading = false;
+			state.loading = false;
+		});
+		builder.addCase(getBrand.pending, (state) => {
+			state.loading = true;
 		});
 		builder.addCase(getBrand.fulfilled, (state, action) => {
 			const { name, image, description, children, products } = action.payload;
+			state.loading = false;
+			state.products = products;
 			state.brand = {
 				name,
 				image,
 				description,
 				children,
 			};
-			state.products = products;
 			state.brands = children;
 			state.category = {};
 		});

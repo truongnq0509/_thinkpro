@@ -81,6 +81,13 @@
 	margin-top: 24px;
 }
 
+.skeleton {
+	&__img {
+		width: 100% !important;
+		height: 240px !important;
+	}
+}
+
 .item {
 	display: flex;
 	flex-direction: column;

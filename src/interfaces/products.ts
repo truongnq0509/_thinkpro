@@ -19,4 +19,5 @@ export interface IProduct {
 	deletedAt?: string;
 	deleted?: boolean;
 	_v?: string;
+	loading?: boolean;
 }

@@ -1,4 +1,4 @@
-import { Button, Col, List, Row, Space } from "antd";
+import { Button, Col, List, Row, Space, Skeleton } from "antd";
 import classNames from "classnames/bind";
 import React, { useState, useEffect } from "react";
 import { BiSupport } from "react-icons/bi";
@@ -151,7 +151,7 @@ let locale = {
 };
 
 const HomePage: React.FC = () => {
-	const { products, categories } = useSelector((state: RootState) => state.app);
+	const { products, categories, loading } = useSelector((state: RootState) => state.app);
 	const dispatch = useDispatch<AppDispatch>();
 	const [slug, setSlug] = useState<string>("ban-phim");
 
@@ -270,6 +270,7 @@ const HomePage: React.FC = () => {
 												fontWeight: 500,
 												background: category?.slug == slug ? "#0065ee1a" : "#fff",
 												color: category?.slug == slug ? "#0065ee" : "#333",
+												overflow: "hidden",
 											}}
 											onClick={() => handleClick(category?.slug as string)}
 										>
@@ -316,9 +317,20 @@ const HomePage: React.FC = () => {
 					locale={locale}
 					renderItem={(product: IProduct) => (
 						<List.Item style={{ height: "100%" }}>
-							<Link to={`/products/${product?.slug}`}>
-								<Product product={product} />
-							</Link>
+							<Skeleton
+								active
+								loading={loading}
+								title={{ className: cx("skeleton__img") }}
+								paragraph={{
+									rows: 3,
+									width: ["100%", 160, 100],
+								}}
+								className={cx("skeleton")}
+							>
+								<Link to={`/products/${product?.slug}`}>
+									<Product product={product} />
+								</Link>
+							</Skeleton>
 						</List.Item>
 					)}
 					className={cx("products")}

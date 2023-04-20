@@ -16,13 +16,13 @@ export const getCategory = createAsyncThunk("category/getSingle", async (query: 
 type initialStateType = {
 	categories: ICategory[];
 	products: IProduct[];
-	isLoading: boolean;
+	loading: boolean;
 };
 
 const initialState: initialStateType = {
 	categories: [],
 	products: [],
-	isLoading: false,
+	loading: false,
 };
 
 const appSlice = createSlice({
@@ -31,25 +31,25 @@ const appSlice = createSlice({
 	reducers: {},
 	extraReducers: (builder) => {
 		builder.addCase(getCategories.pending, (state) => {
-			state.isLoading = true;
+			state.loading = true;
 		});
 		builder.addCase(getCategories.fulfilled, (state, action: PayloadAction<ICategory[]>) => {
-			state.isLoading = false;
+			state.loading = false;
 			state.categories = action.payload;
 		});
 		builder.addCase(getCategories.rejected, (state) => {
-			state.isLoading = false;
+			state.loading = false;
 		});
 		builder.addCase(getCategory.pending, (state) => {
-			state.isLoading = true;
+			state.loading = true;
 		});
 		builder.addCase(getCategory.fulfilled, (state, action) => {
 			const { products } = action.payload;
-			state.isLoading = false;
+			state.loading = false;
 			state.products = products;
 		});
 		builder.addCase(getCategory.rejected, (state) => {
-			state.isLoading = false;
+			state.loading = false;
 		});
 	},
 });

@@ -1,4 +1,4 @@
-import { Button, List, Tooltip, Radio, Space, Row, Col } from "antd";
+import { Button, List, Tooltip, Radio, Space, Row, Col, Skeleton } from "antd";
 import classNames from "classnames/bind";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -174,35 +174,45 @@ const Collection = (props: Props) => {
 	const {
 		state: { slug, isSlug },
 	} = localtion;
+
 	// redux
 	const dispatch = useDispatch<AppDispatch>();
-	const { products, category, brands, brand } = useSelector((state: RootState) => state.collection);
-	const [name, setName] = useState<string>("Nổi bật nhất");
+	const { products, category, brands, brand, loading } = useSelector((state: RootState) => state.collection);
+	const [name, setName] = useState<{ value: number; name: string }>({
+		value: 1,
+		name: "Nổi bật nhất",
+	});
 
 	useEffect(() => {
 		if (isSlug) {
 			dispatch(
 				getBrand({
 					slug: slug,
+					_limit: "20",
 				})
 			);
 		} else {
 			dispatch(
 				getCategory({
 					slug: slug,
+					_limit: "20",
 				})
 			);
 		}
 	}, [slug]);
 
 	const handleChange = async (e: RadioChangeEvent, item: IFilter) => {
-		setName(item.name as string);
+		setName({
+			value: item.value,
+			name: item.name as string,
+		});
 		if (isSlug)
 			return dispatch(
 				getBrand({
 					slug,
 					_order: item.order,
 					_sort: item.sort,
+					_limit: "20",
 				})
 			);
 
@@ -211,6 +221,7 @@ const Collection = (props: Props) => {
 				slug,
 				_order: item.order,
 				_sort: item.sort,
+				_limit: "20",
 			})
 		);
 	};
@@ -299,7 +310,7 @@ const Collection = (props: Props) => {
 						<Tooltip
 							title={() => {
 								return (
-									<Radio.Group>
+									<Radio.Group value={name.value}>
 										<Space direction="vertical">
 											{filters.map((item: IFilter, index: number) => {
 												return (
@@ -326,7 +337,8 @@ const Collection = (props: Props) => {
 								size="middle"
 								className={cx("filter__btn")}
 							>
-								Xắp sếp: {name} <MdKeyboardArrowDown size={16} />
+								Sắp xếp: <span style={{ marginLeft: 4, lineHeight: 1.4 }}>{name.name}</span>
+								<MdKeyboardArrowDown size={16} />
 							</Button>
 						</Tooltip>
 					</SwiperSlide>
@@ -339,9 +351,20 @@ const Collection = (props: Props) => {
 				locale={locale}
 				renderItem={(product: IProduct) => (
 					<List.Item style={{ height: "100%" }}>
-						<Link to={`/products/${product?.slug}`}>
-							<Product product={product} />
-						</Link>
+						<Skeleton
+							active
+							loading={loading}
+							title={{ className: cx("skeleton__img") }}
+							paragraph={{
+								rows: 3,
+								width: ["100%", 160, 100],
+							}}
+							className={cx("skeleton")}
+						>
+							<Link to={`/products/${product?.slug}`}>
+								<Product product={product} />
+							</Link>
+						</Skeleton>
 					</List.Item>
 				)}
 				className={cx("products")}

@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import { AiOutlineShoppingCart, AiOutlineUser } from "react-icons/ai";
 import { GrFormNext, GrFormPrevious } from "react-icons/gr";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { A11y, Navigation, Pagination, Scrollbar } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/swiper.min.css";
@@ -88,20 +88,24 @@ const Header: React.FC = () => {
 											}}
 										>
 											<div className={cx("nav__item")}>
-												<Link
+												<NavLink
 													to={category?.slug as string}
 													state={{
 														slug: category.slug,
 														isSlug: false,
 													}}
-													className={cx("nav__link")}
+													className={({ isActive }) =>
+														cx("nav__link", {
+															active: isActive,
+														})
+													}
 												>
 													<img
 														className={cx("nav__img")}
 														src={category?.image?.path as any}
 													/>
 													<p className={cx("nav__title")}>{category?.name}</p>
-												</Link>
+												</NavLink>
 											</div>
 										</SwiperSlide>
 									);

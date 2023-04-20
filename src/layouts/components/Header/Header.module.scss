@@ -73,6 +73,10 @@
 		border-radius: 8px;
 		padding: 8px 12px;
 
+		&.active {
+			background-color: var(--bg-gray);
+		}
+
 		&:hover {
 			background-color: var(--bg-gray);
 		}

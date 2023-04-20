@@ -74,6 +74,13 @@
 	}
 }
 
+.skeleton {
+	&__img {
+		width: 100% !important;
+		height: 240px !important;
+	}
+}
+
 .empty {
 	display: block;
 
