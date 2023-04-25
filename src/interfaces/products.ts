@@ -13,6 +13,7 @@ export interface IProduct {
 	assets?: [];
 	status?: number;
 	categoryId?: string;
+	category?: any;
 	brandId?: string;
 	createdAt?: string;
 	updatedAt?: string;

@@ -6,6 +6,7 @@ import PrivateLayout from "~/layouts/private";
 import { DefaultLayout } from "~/layouts/client/DefaultLayout";
 import { HomePage } from "~/pages/client/Home";
 import { CollectionPage } from "~/pages/client/Collection";
+import { SkuPage } from "~/pages/client/Sku";
 import { NotFoundPage } from "~/pages/client/NotFound";
 import { LoginPage } from "~/pages/client/Login";
 import { RegisterPage } from "~/pages/client/Register";
@@ -36,6 +37,11 @@ const routes: RouteObject[] = [
 					{
 						index: true,
 						element: <CollectionPage />,
+					},
+					{
+						path: ":slug",
+
+						element: <SkuPage />,
 					},
 				],
 			},

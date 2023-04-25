@@ -1,5 +1,4 @@
 import { ErrorMessage } from "@hookform/error-message";
-import { Editor } from "@tinymce/tinymce-react";
 import { Button, Col, Form, Input, Modal, Row, Select, Space, Tag, TreeSelect, Upload } from "antd";
 import type { RcFile, UploadProps } from "antd/es/upload";
 import type { UploadFile } from "antd/es/upload/interface";
@@ -393,49 +392,7 @@ const AddProductPage = (props: Props) => {
 								name="description"
 								control={control}
 								render={({ field: { onChange, name, value, ref, onBlur } }) => {
-									return (
-										<Editor
-											apiKey={import.meta.env.VITE_API_KEY_TINY}
-											initialValue="<p>SEO đê đê đê!!!</p>"
-											onEditorChange={onChange}
-											textareaName={name}
-											value={value}
-											init={{
-												width: "100%",
-												height: "100vh",
-												menubar: false,
-												automatic_uploads: true,
-												file_picker_types: "file image media",
-												images_upload_credentials: true,
-												plugins: [
-													"advlist",
-													"autolink",
-													"lists",
-													"link",
-													"charmap",
-													"preview",
-													"anchor",
-													"searchreplace",
-													"visualblocks",
-													"code",
-													"fullscreen",
-													"insertdatetime",
-													"media",
-													"table",
-													"wordcount",
-													"quickbars",
-													"emoticons",
-													"image",
-												],
-												toolbar1:
-													"undo redo | blocks | " +
-													"bold italic forecolor | alignleft aligncenter " +
-													"image emoticons",
-												content_style:
-													"body { font-family:Quicksand,sans-serif; font-size:14px }",
-											}}
-										/>
-									);
+									return <Input />;
 								}}
 							/>
 						</Form.Item>

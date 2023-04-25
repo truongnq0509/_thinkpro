@@ -327,7 +327,7 @@ const HomePage: React.FC = () => {
 								}}
 								className={cx("skeleton")}
 							>
-								<Link to={`/products/${product?.slug}`}>
+								<Link to={`/${slug}/${product?.slug}`}>
 									<Product product={product} />
 								</Link>
 							</Skeleton>

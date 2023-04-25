@@ -361,7 +361,12 @@ const Collection = (props: Props) => {
 							}}
 							className={cx("skeleton")}
 						>
-							<Link to={`/products/${product?.slug}`}>
+							<Link
+								to={`/${slug}/${product?.slug}`}
+								state={{
+									slug: product?.slug,
+								}}
+							>
 								<Product product={product} />
 							</Link>
 						</Skeleton>

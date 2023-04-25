@@ -1,5 +1,4 @@
 import { ErrorMessage } from "@hookform/error-message";
-import { Editor } from "@tinymce/tinymce-react";
 import {
 	Button,
 	Col,
@@ -509,51 +508,7 @@ const UpdateProductPage = (props: Props) => {
 								name="description"
 								control={control}
 								render={({ field: { onChange, name, value, ref, onBlur } }) => {
-									return (
-										<Editor
-											apiKey={import.meta.env.VITE_API_KEY_TINY}
-											value={value}
-											onEditorChange={(e) => onChange(e)}
-											ref={ref}
-											tagName={name}
-											textareaName={name}
-											onBlur={onBlur}
-											init={{
-												width: "100%",
-												height: "100vh",
-												menubar: false,
-												automatic_uploads: true,
-												file_picker_types: "file image media",
-												images_upload_credentials: true,
-												plugins: [
-													"advlist",
-													"autolink",
-													"lists",
-													"link",
-													"charmap",
-													"preview",
-													"anchor",
-													"searchreplace",
-													"visualblocks",
-													"code",
-													"fullscreen",
-													"insertdatetime",
-													"media",
-													"table",
-													"wordcount",
-													"quickbars",
-													"emoticons",
-													"image",
-												],
-												toolbar1:
-													"undo redo | blocks | " +
-													"bold italic forecolor | alignleft aligncenter " +
-													"image emoticons",
-												content_style:
-													"body { font-family:Quicksand,sans-serif; font-size:14px }",
-											}}
-										/>
-									);
+									return <Input />;
 								}}
 							/>
 						</Form.Item>
