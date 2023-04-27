@@ -1,0 +1,101 @@
+@use "../../../components/GlobalStyles/GlobalStyles.module.scss" as screen;
+.wrapper {
+}
+
+.collection {
+	display: flex;
+	padding: 24px;
+	border-radius: 8px;
+	background-color: var(--bg-white);
+
+	@include screen.xs {
+		margin: 0 16px;
+	}
+
+	@include screen.sm {
+		margin: 0 16px;
+	}
+
+	@include screen.md {
+		margin: 0;
+	}
+
+	&__img {
+		img {
+			width: 84px;
+			height: 84px;
+			object-fit: cover;
+			border-radius: 50%;
+			background-color: var(--bg-gray);
+		}
+	}
+
+	&__desc {
+		flex: 1;
+	}
+
+	&__title {
+		color: var(--text-black);
+		font-weight: 500;
+		font-size: 24px;
+	}
+
+	p {
+		color: var(--text-black);
+		font-weight: 500;
+		font-size: 14px;
+		margin-top: 8px;
+		line-height: 1.4;
+		max-width: 600px;
+	}
+
+	.line {
+		margin: 16px 0;
+		height: 1px;
+		background-color: #f0f2f4;
+	}
+}
+
+.products {
+	@include screen.xs {
+		margin: 0 16px;
+	}
+
+	@include screen.sm {
+		margin: 0 16px;
+	}
+
+	@include screen.md {
+		margin: 16px 0 0 0;
+	}
+
+	div > div > div > div > div {
+		height: calc(100% - 16px);
+	}
+}
+
+.skeleton {
+	&__img {
+		width: 100% !important;
+		height: 240px !important;
+	}
+}
+
+.empty {
+	display: block;
+
+	h4 {
+		font-size: 18px;
+		font-weight: 600;
+		margin-top: 8px;
+		color: var(--text-black);
+	}
+
+	p {
+		font-size: 14px;
+		font-weight: 400;
+		margin-top: 8px;
+		margin-bottom: 32px;
+		color: var(--text-black);
+	}
+}

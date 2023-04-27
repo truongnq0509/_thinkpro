@@ -1,33 +1,16 @@
-import { Button, List, Tooltip, Radio, Space, Row, Col, Skeleton } from "antd";
+import { Button, List, Skeleton } from "antd";
 import classNames from "classnames/bind";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Link, useLocation, useParams } from "react-router-dom";
-import slugify from "react-slugify";
-import { A11y, Navigation, Pagination, Scrollbar } from "swiper";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import "swiper/css/scrollbar";
-import { Swiper, SwiperSlide } from "swiper/react";
+import { useSelector } from "react-redux";
+import { Link, useSearchParams } from "react-router-dom";
 import { Product } from "~/components/Product";
-import { IBrand, IProduct } from "~/interfaces";
-import { AppDispatch, RootState } from "~/store";
-import { getBrand, getCategory } from "~/store/reducers/collectionSlice";
-import styles from "./Collection.module.scss";
-import { MdKeyboardArrowDown, MdOutlineArrowRightAlt } from "react-icons/md";
-import type { RadioChangeEvent } from "antd";
+import { IProduct } from "~/interfaces";
+import { RootState } from "~/store";
+import styles from "./Search.module.scss";
 import { useTitle } from "~/hooks";
 
 const cx = classNames.bind(styles);
 
 type Props = {};
-interface IFilter {
-	name: string | React.ReactNode;
-	value: number;
-	sort: string;
-	order: string;
-}
 
 let locale = {
 	emptyText: (
@@ -119,239 +102,28 @@ let locale = {
 	),
 };
 
-const filters: IFilter[] = [
-	{
-		name: "Nổi bật nhất",
-		value: 1,
-		sort: "createdAt",
-		order: "asc",
-	},
-	{
-		name: (
-			<>
-				Giá thấp <MdOutlineArrowRightAlt /> cao
-			</>
-		),
-		value: 2,
-		sort: "price",
-		order: "asc",
-	},
-	{
-		name: (
-			<>
-				Giá cao <MdOutlineArrowRightAlt /> thấp
-			</>
-		),
-		value: 3,
-		sort: "price",
-		order: "desc",
-	},
-	{
-		name: (
-			<>
-				Tên A <MdOutlineArrowRightAlt /> Z
-			</>
-		),
-		value: 4,
-		sort: "name",
-		order: "asc",
-	},
-	{
-		name: (
-			<>
-				Tên Z <MdOutlineArrowRightAlt /> A
-			</>
-		),
-		value: 5,
-		sort: "name",
-		order: "desc",
-	},
-];
-
-const Collection = (props: Props) => {
-	// router
-	const { slug: slugRouter } = useParams();
-	const localtion: any = useLocation();
-	const {
-		state: { slug, isSlug },
-	} = localtion;
-
+const Search = (props: Props) => {
+	const [searchParams] = useSearchParams();
+	const keyword = searchParams.get("keyword");
 	// redux
-	const dispatch = useDispatch<AppDispatch>();
-	const { products, category, brands, brand, loading } = useSelector((state: RootState) => state.collection);
-	const [name, setName] = useState<{ value: number; name: string }>({
-		value: 1,
-		name: "Nổi bật nhất",
-	});
+	const { results, loading } = useSelector((state: RootState) => state.app);
 
-	useTitle(`${category?.name || brand?.name} giá rẻ, chính hãng, Trả góp 0% 04/2023| THINKPRO`);
-
-	useEffect(() => {
-		if (isSlug) {
-			dispatch(
-				getBrand({
-					slug: slug,
-					_limit: "20",
-				})
-			);
-		} else {
-			dispatch(
-				getCategory({
-					slug: slug,
-					_limit: "20",
-				})
-			);
-		}
-		window.scrollTo(0, 0);
-	}, [slug]);
-
-	const handleChange = async (e: RadioChangeEvent, item: IFilter) => {
-		setName({
-			value: item.value,
-			name: item.name as string,
-		});
-		if (isSlug)
-			return dispatch(
-				getBrand({
-					slug,
-					_order: item.order,
-					_sort: item.sort,
-					_limit: "20",
-				})
-			);
-
-		dispatch(
-			getCategory({
-				slug,
-				_order: item.order,
-				_sort: item.sort,
-				_limit: "20",
-			})
-		);
-	};
+	useTitle(`Kết quả tìm kiếm ${keyword}`);
 
 	return (
 		<section className={cx("wrapper")}>
 			<section className={cx("collection")}>
-				{brand.image && (
-					<section className={cx("collection__img")}>
-						<img
-							src={brand?.image?.path as string}
-							alt="brands"
-						/>
-					</section>
-				)}
-
-				<section
-					className={cx("collection__desc")}
-					style={{ marginLeft: brand.image && "24px" }}
-				>
-					<h1 className={cx("collection__title")}>{category?.name || brand?.name}</h1>
-					<p>{category?.description || brand.description}</p>
-					{brands?.length > 0 && <div className={cx("line")}></div>}
-					<Row gutter={[8, 8]}>
-						{(brand?.children?.length as number) > 0 && (
-							<Col>
-								<Link
-									to={`/${slugRouter}`}
-									state={{
-										slug: brand?.slug,
-										isSlug: true,
-									}}
-								>
-									<Button
-										size="large"
-										style={{
-											fontSize: "12px",
-											border: "none",
-											fontWeight: 400,
-											background: "#f6f9fc",
-											color: "#333",
-										}}
-									>
-										Tất Cả
-									</Button>
-								</Link>
-							</Col>
-						)}
-						{brands?.map((brand: IBrand) => {
-							return (
-								<Col key={brand?._id}>
-									<Link
-										to={`/${slugRouter}-${slugify(brand.name)}`}
-										state={{
-											slug: brand?.slug,
-											isSlug: true,
-										}}
-									>
-										<Button
-											size="large"
-											style={{
-												fontSize: "12px",
-												border: "none",
-												fontWeight: 400,
-												background: "#f6f9fc",
-												color: "#333",
-											}}
-										>
-											{brand.name}
-										</Button>
-									</Link>
-								</Col>
-							);
-						})}
-					</Row>
+				<section className={cx("collection__desc")}>
+					<h1 className={cx("collection__title")}>
+						Kết quả tìm kiếm cho <span style={{ fontWeight: 700, fontStyle: "inherit" }}>"{keyword}"</span>
+					</h1>
+					<p>Tìm thấy {results.length} kết quả</p>
 				</section>
-			</section>
-
-			<section className={cx("filter")}>
-				<Swiper
-					modules={[Navigation, Pagination, Scrollbar, A11y]}
-					spaceBetween={10}
-					slidesPerView="auto"
-				>
-					<SwiperSlide>
-						<Tooltip
-							title={() => {
-								return (
-									<Radio.Group value={name.value}>
-										<Space direction="vertical">
-											{filters.map((item: IFilter, index: number) => {
-												return (
-													<Radio
-														key={index}
-														value={item.value}
-														onChange={(e) => handleChange(e, item)}
-														className={cx("filter__radio")}
-													>
-														{item.name}
-													</Radio>
-												);
-											})}
-										</Space>
-									</Radio.Group>
-								);
-							}}
-							trigger={"click"}
-							placement="bottom"
-							className={cx("filter__tooltip")}
-							color="#fff"
-						>
-							<Button
-								size="middle"
-								className={cx("filter__btn")}
-							>
-								Sắp xếp: <span style={{ marginLeft: 4, lineHeight: 1.4 }}>{name.name}</span>
-								<MdKeyboardArrowDown size={16} />
-							</Button>
-						</Tooltip>
-					</SwiperSlide>
-				</Swiper>
 			</section>
 
 			<List
 				grid={{ gutter: 12, xs: 1, sm: 2, md: 4, lg: 4, xl: 5, xxl: 5 }}
-				dataSource={products}
+				dataSource={results}
 				locale={locale}
 				renderItem={(product: IProduct) => (
 					<List.Item style={{ height: "100%" }}>
@@ -366,7 +138,7 @@ const Collection = (props: Props) => {
 							className={cx("skeleton")}
 						>
 							<Link
-								to={`/${slug}/${product?.slug}`}
+								to={`/${product.categoryId.slug}/${product?.slug}`}
 								state={{
 									slug: product?.slug,
 								}}
@@ -382,4 +154,4 @@ const Collection = (props: Props) => {
 	);
 };
 
-export default Collection;
+export default Search;

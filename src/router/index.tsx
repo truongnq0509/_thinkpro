@@ -10,6 +10,7 @@ import { SkuPage } from "~/pages/client/Sku";
 import { NotFoundPage } from "~/pages/client/NotFound";
 import { LoginPage } from "~/pages/client/Login";
 import { RegisterPage } from "~/pages/client/Register";
+import { SearchPage } from "~/pages/client/Search";
 
 // admin
 import { AdminLayout } from "~/layouts/admin/AdminLayout";
@@ -30,6 +31,10 @@ const routes: RouteObject[] = [
 			{
 				index: true,
 				element: <HomePage />,
+			},
+			{
+				path: "tim-kiem",
+				element: <SearchPage />,
 			},
 			{
 				path: ":slug",

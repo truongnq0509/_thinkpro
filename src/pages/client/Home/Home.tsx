@@ -19,6 +19,7 @@ import { ICategory, IProduct } from "~/interfaces";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "~/store";
 import { getCategory } from "~/store/reducers/appSlice";
+import { useTitle } from "~/hooks";
 
 const cx = classNames.bind(styles);
 
@@ -154,6 +155,10 @@ const HomePage: React.FC = () => {
 	const { products, categories, loading } = useSelector((state: RootState) => state.app);
 	const dispatch = useDispatch<AppDispatch>();
 	const [slug, setSlug] = useState<string>("ban-phim");
+
+	useTitle(
+		"ThinkPro,Máy tính xách tay,Laptop,Ghế công thái học,Bàn phím cơ,Loa,Bàn nâng hạ,NiceSpace,NiceDesign,PS5,Nintendo"
+	);
 
 	useEffect(() => {
 		dispatch(

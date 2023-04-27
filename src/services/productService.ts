@@ -1,5 +1,10 @@
 import * as httpRequest from "~/utils/httpRequest";
 
+export const search = async (keyword: string) => {
+	const response = await httpRequest.get(`/products/search?keyword=${keyword}`);
+	return response?.data;
+};
+
 export const getProduct = async (slug: string) => {
 	const response = await httpRequest.get(`/products?slug=${slug}`);
 	return response?.data;

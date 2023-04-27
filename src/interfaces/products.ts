@@ -12,7 +12,7 @@ export interface IProduct {
 	attributes?: [];
 	assets?: [];
 	status?: number;
-	categoryId?: string;
+	categoryId?: any;
 	category?: any;
 	brandId?: string;
 	createdAt?: string;

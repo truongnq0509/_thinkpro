@@ -1,40 +1,41 @@
-import React, { useState, useEffect } from "react";
+import { Color } from "@tiptap/extension-color";
+import Image from "@tiptap/extension-image";
+import ListItem from "@tiptap/extension-list-item";
+import TextStyle from "@tiptap/extension-text-style";
+import { EditorContent, useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import { Button, Col, InputNumber, Modal, Row, Space } from "antd";
 import classNames from "classnames/bind";
-import styles from "./Sku.module.scss";
-import { useParams, Link, useLocation } from "react-router-dom";
-import { IProduct } from "~/interfaces";
-import { getProduct as apiGetProduct } from "~/services/productService";
-import { Space, Row, Col, Button, Modal, InputNumber } from "antd";
-import { A11y, Navigation, Pagination, Scrollbar, Mousewheel, FreeMode, Thumbs } from "swiper";
+import React, { useEffect, useState } from "react";
+import Marquee from "react-fast-marquee";
+import { AiFillPhone } from "react-icons/ai";
+import { BiSupport } from "react-icons/bi";
+import { FaSyncAlt } from "react-icons/fa";
+import { GrFormNext, GrFormPrevious } from "react-icons/gr";
+import { HiCheckCircle } from "react-icons/hi";
+import {
+	MdDashboardCustomize,
+	MdDiscount,
+	MdEmail,
+	MdKeyboardArrowDown,
+	MdKeyboardArrowUp,
+	MdOutlineClose,
+	MdOutlineKeyboardArrowRight,
+	MdTouchApp,
+} from "react-icons/md";
+import { TbClockHour5, TbDiscountCheckFilled } from "react-icons/tb";
+import { Link, useLocation, useParams } from "react-router-dom";
+import { A11y, FreeMode, Mousewheel, Navigation, Pagination, Scrollbar, Thumbs } from "swiper";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { GrFormNext, GrFormPrevious } from "react-icons/gr";
-import Marquee from "react-fast-marquee";
-import { BiSupport } from "react-icons/bi";
-import { HiCheckCircle } from "react-icons/hi";
-import {
-	MdTouchApp,
-	MdEmail,
-	MdOutlineKeyboardArrowRight,
-	MdOutlineClose,
-	MdDiscount,
-	MdDashboardCustomize,
-	MdKeyboardArrowUp,
-	MdKeyboardArrowDown,
-} from "react-icons/md";
-import { AiFillPhone } from "react-icons/ai";
-import { TbClockHour5, TbDiscountCheckFilled } from "react-icons/tb";
-import { EditorContent, useEditor } from "@tiptap/react";
-import { Color } from "@tiptap/extension-color";
-import ListItem from "@tiptap/extension-list-item";
-import TextStyle from "@tiptap/extension-text-style";
-import StarterKit from "@tiptap/starter-kit";
-import Image from "@tiptap/extension-image";
-import { FaSyncAlt } from "react-icons/fa";
+import { IProduct } from "~/interfaces";
+import { getProduct as apiGetProduct } from "~/services/productService";
 import { formatNumber, percent } from "~/utils/fc";
+import styles from "./Sku.module.scss";
+import { useTitle } from "~/hooks";
 
 type Props = {};
 const cx = classNames.bind(styles);
@@ -129,6 +130,8 @@ const Sku = (props: Props) => {
 		description: false,
 		authenticity: false,
 	});
+
+	useTitle(`${product.name}, Trả góp 0% | THINKPRO`);
 
 	const editor1 = useEditor({
 		extensions: [
