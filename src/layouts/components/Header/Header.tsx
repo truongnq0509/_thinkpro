@@ -36,7 +36,7 @@ const Header: React.FC = () => {
 					</Link>
 					<Search />
 					<Space className={cx("cart")}>
-						<Link to="/login">
+						<Link to="/dang-nhap">
 							<Button
 								shape="circle"
 								className={cx("btn")}
@@ -45,7 +45,7 @@ const Header: React.FC = () => {
 							/>
 							<span className={cx("quanlity")}>1</span>
 						</Link>
-						<Link to="/cart">
+						<Link to="/gio-hang">
 							<Button
 								shape="circle"
 								className={cx("btn")}

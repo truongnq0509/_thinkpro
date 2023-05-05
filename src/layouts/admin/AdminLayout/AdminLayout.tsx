@@ -1,16 +1,16 @@
-import React from "react";
 import type { MenuProps } from "antd";
-import { Layout, Menu, Input, Avatar, Space, Button } from "antd";
-import { Outlet, Link, useNavigate } from "react-router-dom";
+import { Avatar, Input, Layout, Menu, Space } from "antd";
 import classNames from "classnames/bind";
-import styles from "./AdminLayout.module.scss";
+import React from "react";
 import { AiOutlineHome, AiOutlineLogout } from "react-icons/ai";
-import { BsPhone } from "react-icons/bs";
 import { BiCategoryAlt } from "react-icons/bi";
-import { TbBrandCake } from "react-icons/tb";
+import { BsPhone } from "react-icons/bs";
 import { FiSearch } from "react-icons/fi";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { IoSettingsOutline } from "react-icons/io5";
+import { TbBrandCake } from "react-icons/tb";
+import { Link, Outlet } from "react-router-dom";
+import styles from "./AdminLayout.module.scss";
 
 const { Content, Sider, Header } = Layout;
 

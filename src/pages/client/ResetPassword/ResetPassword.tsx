@@ -3,35 +3,35 @@ import { Button, Form, Input, Spin } from "antd";
 import classNames from "classnames/bind";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Swal from "sweetalert2";
-import { useTitle } from "~/hooks";
-import { login as apiLogin } from "~/services/authService";
-import { AppDispatch } from "~/store";
-import { login } from "~/store/reducers/authSlice";
+import { IUser } from "~/interfaces/auth";
 import { iconSpin } from "~/utils/icons";
-import { siginSchema } from "~/validations/auth";
-import styles from "./Login.module.scss";
+import { resetPasswordSchema } from "~/validations/auth";
+import styles from "./ResetPassword.module.scss";
+import { useTitle } from "~/hooks";
+import { resetPassword as apiResetPassword } from "~/services/authService";
 
-type Props = {};
 const cx = classNames.bind(styles);
+type Props = {};
 
-const Login = (props: Props) => {
+const Register = (props: Props) => {
 	const navigate = useNavigate();
-	const dispatch = useDispatch<AppDispatch>();
-	const [loading, setLoading] = useState<boolean>(false);
+	const [searchParams] = useSearchParams();
+	const token = searchParams.get("token") as string;
+	const userId = searchParams.get("id") as string;
+	const [loading, setLoading] = useState(false);
 
-	useTitle("Thinkpro - Đăng nhập");
+	useTitle("Thinkpro - Reset mật khẩu");
 
 	const { control, handleSubmit } = useForm<any>({
 		defaultValues: {
-			email: "",
 			password: "",
+			confirmPassword: "",
 		},
 		context: "context",
 		resolver: async (data, context) => {
-			const { error, value: values } = siginSchema.validate(data, {
+			const { error, value: values } = resetPasswordSchema.validate(data, {
 				abortEarly: false,
 			});
 
@@ -39,31 +39,25 @@ const Login = (props: Props) => {
 
 			return {
 				values: {},
-				errors: error.details.reduce(
-					(previous, currentError) => ({
-						...previous,
-						[currentError.path[0]]: currentError,
-					}),
-					{}
-				),
+				errors: error.details.reduce((previous, currentError) => ({
+					...previous,
+					[currentError.path[0]]: currentError,
+				})),
 			};
 		},
 	});
 
-	const onSubmit = async (data: any) => {
+	const onSubmit = async (data: IUser) => {
 		setLoading(true);
 		try {
-			const { accessToken } = await apiLogin(data);
-			dispatch(
-				login({
-					loggedIn: true,
-					accessToken,
-				})
-			);
+			await apiResetPassword({
+				token,
+				userId,
+				password: data.password,
+			});
 			setLoading(false);
-			navigate("/admin");
+			Swal.fire("Thành công", "Reset mật khẩu thành công", "success").then(() => navigate("/dang-nhap"));
 		} catch (error: any) {
-			console.log(error);
 			setLoading(false);
 			Swal.fire("Thất bại", error.response?.data?.error.message || "", "error");
 		}
@@ -75,7 +69,6 @@ const Login = (props: Props) => {
 			indicator={iconSpin}
 			size="large"
 			wrapperClassName={cx("wrapper")}
-			delay={200}
 		>
 			<div className={cx("wrapper")}>
 				<div className={cx("container")}>
@@ -89,42 +82,14 @@ const Login = (props: Props) => {
 								alt=""
 							/>
 						</Link>
-						<h1 className={cx("title")}>Đăng nhập vào ThinkPro</h1>
+						<h1 className={cx("title")}>Reset Mật Khẩu</h1>
 					</div>
 					<div className={cx("body")}>
 						<Form
 							onFinish={handleSubmit(onSubmit)}
-							layout="vertical"
 							className={cx("form")}
+							layout="vertical"
 						>
-							<Form.Item>
-								<Controller
-									control={control}
-									name="email"
-									render={({ field, formState: { errors } }) => {
-										return (
-											<>
-												<Input
-													{...field}
-													size="large"
-													placeholder="Email"
-													status={errors.email && "error"}
-													className={cx("input")}
-												/>
-												<ErrorMessage
-													name="email"
-													errors={errors}
-													render={({ message }) => {
-														return (
-															<p style={{ color: "#f03e3e", marginTop: 4 }}>{message}</p>
-														);
-													}}
-												/>
-											</>
-										);
-									}}
-								/>
-							</Form.Item>
 							<Form.Item>
 								<Controller
 									control={control}
@@ -135,7 +100,7 @@ const Login = (props: Props) => {
 												<Input.Password
 													{...field}
 													size="large"
-													placeholder="Mật khẩu"
+													placeholder="Mật khẩu Mới"
 													status={errors.email && "error"}
 													className={cx("input")}
 												/>
@@ -153,33 +118,44 @@ const Login = (props: Props) => {
 									}}
 								/>
 							</Form.Item>
-							<Link
-								to="/quen-mat-khau"
-								className={cx("forgot-password")}
-							>
-								Quên mật khẩu?
-							</Link>
+							<Form.Item>
+								<Controller
+									control={control}
+									name="confirmPassword"
+									render={({ field, formState: { errors } }) => {
+										return (
+											<>
+												<Input.Password
+													{...field}
+													size="large"
+													placeholder="Nhập lại mật khẩu mới"
+													status={errors.confirmPassword && "error"}
+													className={cx("input")}
+												/>
+												<ErrorMessage
+													name="confirmPassword"
+													errors={errors}
+													render={({ message }) => {
+														return (
+															<p style={{ color: "#f03e3e", marginTop: 4 }}>{message}</p>
+														);
+													}}
+												/>
+											</>
+										);
+									}}
+								/>
+							</Form.Item>
 							<Form.Item>
 								<Button
 									size="middle"
 									htmlType="submit"
 									className={cx("btn")}
 								>
-									Đăng Nhập
+									Thay Đổi Mật Khẩu
 								</Button>
 							</Form.Item>
 						</Form>
-						<div className={cx("body__bottom")}>
-							<p className={cx("acc")}>
-								<span>Bạn chưa có tài khoản? </span>
-								<Link
-									to={"/dang-ky"}
-									className={cx("link")}
-								>
-									Đăng ký
-								</Link>
-							</p>
-						</div>
 					</div>
 					<div className={cx("footer")}>
 						<span>
@@ -200,4 +176,4 @@ const Login = (props: Props) => {
 	);
 };
 
-export default Login;
+export default Register;

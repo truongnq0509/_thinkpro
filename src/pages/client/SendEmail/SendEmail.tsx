@@ -7,31 +7,31 @@ import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useTitle } from "~/hooks";
-import { login as apiLogin } from "~/services/authService";
+import { sendEmail as apiSendEmail } from "~/services/authService";
 import { AppDispatch } from "~/store";
-import { login } from "~/store/reducers/authSlice";
 import { iconSpin } from "~/utils/icons";
-import { siginSchema } from "~/validations/auth";
-import styles from "./Login.module.scss";
+import { sendEmailSchema } from "~/validations/auth";
+import styles from "./SendEmail.module.scss";
 
 type Props = {};
 const cx = classNames.bind(styles);
 
-const Login = (props: Props) => {
-	const navigate = useNavigate();
-	const dispatch = useDispatch<AppDispatch>();
+const SendEmail = (props: Props) => {
 	const [loading, setLoading] = useState<boolean>(false);
 
-	useTitle("Thinkpro - Đăng nhập");
+	useTitle("Thinkpro - Quên mật khẩu");
 
-	const { control, handleSubmit } = useForm<any>({
+	const {
+		control,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<any>({
 		defaultValues: {
 			email: "",
-			password: "",
 		},
 		context: "context",
 		resolver: async (data, context) => {
-			const { error, value: values } = siginSchema.validate(data, {
+			const { error, value: values } = sendEmailSchema.validate(data, {
 				abortEarly: false,
 			});
 
@@ -53,19 +53,13 @@ const Login = (props: Props) => {
 	const onSubmit = async (data: any) => {
 		setLoading(true);
 		try {
-			const { accessToken } = await apiLogin(data);
-			dispatch(
-				login({
-					loggedIn: true,
-					accessToken,
-				})
-			);
+			await apiSendEmail(data);
 			setLoading(false);
-			navigate("/admin");
+			const text = `Chúng tôi đã gửi một email có lên kết để đặt lại mật khẩu của bạn. Có thể mất từ 1 đến 2 phút để hoàn thành. Hãy kiểm tra hộp thư đến của bạn ${data.email}.`;
+			Swal.fire("Thành công", text, "success");
 		} catch (error: any) {
-			console.log(error);
 			setLoading(false);
-			Swal.fire("Thất bại", error.response?.data?.error.message || "", "error");
+			Swal.fire("Thất bại", error?.response?.data?.error.message || "", "error");
 		}
 	};
 
@@ -89,7 +83,7 @@ const Login = (props: Props) => {
 								alt=""
 							/>
 						</Link>
-						<h1 className={cx("title")}>Đăng nhập vào ThinkPro</h1>
+						<h1 className={cx("title")}>Quên mật khẩu</h1>
 					</div>
 					<div className={cx("body")}>
 						<Form
@@ -125,61 +119,17 @@ const Login = (props: Props) => {
 									}}
 								/>
 							</Form.Item>
-							<Form.Item>
-								<Controller
-									control={control}
-									name="password"
-									render={({ field, formState: { errors } }) => {
-										return (
-											<>
-												<Input.Password
-													{...field}
-													size="large"
-													placeholder="Mật khẩu"
-													status={errors.email && "error"}
-													className={cx("input")}
-												/>
-												<ErrorMessage
-													name="password"
-													errors={errors}
-													render={({ message }) => {
-														return (
-															<p style={{ color: "#f03e3e", marginTop: 4 }}>{message}</p>
-														);
-													}}
-												/>
-											</>
-										);
-									}}
-								/>
-							</Form.Item>
-							<Link
-								to="/quen-mat-khau"
-								className={cx("forgot-password")}
-							>
-								Quên mật khẩu?
-							</Link>
+
 							<Form.Item>
 								<Button
 									size="middle"
 									htmlType="submit"
 									className={cx("btn")}
 								>
-									Đăng Nhập
+									Gửi email cho tôi
 								</Button>
 							</Form.Item>
 						</Form>
-						<div className={cx("body__bottom")}>
-							<p className={cx("acc")}>
-								<span>Bạn chưa có tài khoản? </span>
-								<Link
-									to={"/dang-ky"}
-									className={cx("link")}
-								>
-									Đăng ký
-								</Link>
-							</p>
-						</div>
 					</div>
 					<div className={cx("footer")}>
 						<span>
@@ -200,4 +150,4 @@ const Login = (props: Props) => {
 	);
 };
 
-export default Login;
+export default SendEmail;

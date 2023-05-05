@@ -23,6 +23,7 @@
 		"dotenv": "^16.0.3",
 		"html-react-parser": "^3.0.16",
 		"joi": "^17.9.1",
+		"js-cookie": "^3.0.5",
 		"lodash": "^4.17.21",
 		"moment": "^2.29.4",
 		"react": "^18.2.0",
@@ -35,10 +36,13 @@
 		"react-router": "^6.10.0",
 		"react-router-dom": "^6.10.0",
 		"react-slugify": "^3.0.2",
+		"redux-persist": "^6.0.0",
 		"sass": "^1.60.0",
+		"sweetalert2": "^11.7.3",
 		"swiper": "^9.2.0"
 	},
 	"devDependencies": {
+		"@types/js-cookie": "^3.0.3",
 		"@types/lodash": "^4.14.194",
 		"@types/node": "^18.15.11",
 		"@types/react": "^18.0.28",
