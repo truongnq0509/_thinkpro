@@ -1,0 +1,85 @@
+@use "../../../components/GlobalStyles/GlobalStyles.module.scss" as screen;
+
+.wrapper {
+	@include screen.xs {
+		margin: 0 16px;
+	}
+
+	@include screen.sm {
+		margin: 0 16px;
+	}
+
+	@include screen.md {
+		margin: 0;
+	}
+}
+
+.profile {
+	font-size: 14px;
+	color: var(--color-black);
+
+	&__header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 16px 0;
+		border-bottom: 0.5px solid #f0f2f4;
+		gap: 16px;
+
+		img {
+			width: 36px;
+			height: 36px;
+			object-fit: cover;
+			border-radius: 50%;
+			margin-left: 6px;
+		}
+	}
+
+	&__info {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+
+		span {
+			display: block;
+			width: 100%;
+			height: 20px;
+			overflow: hidden;
+			white-space: normal;
+			text-overflow: ellipsis;
+		}
+
+		a {
+			display: inline-flex;
+			align-items: center;
+			gap: 2px;
+			color: var(--text-gray);
+		}
+	}
+
+	&__body {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		margin-top: 8px;
+	}
+
+	&__list {
+		width: 100%;
+	}
+
+	&__link {
+		display: flex;
+		font-size: 14px;
+		color: var(--text-gray);
+		padding: 16px 0;
+	}
+}
+
+.content {
+	width: 100%;
+	height: 100%;
+	background-color: var(--bg-white);
+	border-radius: 6px;
+	padding: 0 32px;
+}

@@ -63,7 +63,6 @@ const Login = (props: Props) => {
 			setLoading(false);
 			navigate("/admin");
 		} catch (error: any) {
-			console.log(error);
 			setLoading(false);
 			Swal.fire("Thất bại", error.response?.data?.error.message || "", "error");
 		}

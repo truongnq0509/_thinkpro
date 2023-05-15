@@ -1,10 +1,9 @@
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Navigate } from "react-router-dom";
 import { RootState, AppDispatch } from "~/store";
 import { setCurrentUser } from "~/store/reducers/authSlice";
 import { me as apiGetCurrentUser } from "~/services/authService";
-import store from "~/store";
 
 type Props = {
 	children: ReactNode;
@@ -13,7 +12,6 @@ type Props = {
 
 const PrivateRouter = ({ children, roles }: Props) => {
 	const { loggedIn, user } = useSelector((state: RootState) => state.auth);
-	const [role, setRole] = useState(user.role);
 	const dispatch = useDispatch<AppDispatch>();
 
 	useEffect(() => {
@@ -27,7 +25,6 @@ const PrivateRouter = ({ children, roles }: Props) => {
 					role: data.role,
 				})
 			);
-			setRole(data.role);
 		};
 		fetchApi();
 	}, [loggedIn]);
@@ -41,11 +38,9 @@ const PrivateRouter = ({ children, roles }: Props) => {
 		);
 	}
 
-	console.log(user);
-
 	return (
 		<>
-			{roles.find((item) => role == item) ? (
+			{roles.find((role) => role == user.role) ? (
 				children
 			) : (
 				<Navigate

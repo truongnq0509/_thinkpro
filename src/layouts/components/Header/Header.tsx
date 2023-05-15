@@ -1,4 +1,4 @@
-import { Button, Col, Row, Space } from "antd";
+import { Button, Col, Row, Space, Popover } from "antd";
 import classNames from "classnames/bind";
 import React, { useEffect } from "react";
 import { AiOutlineShoppingCart, AiOutlineUser } from "react-icons/ai";
@@ -13,16 +13,40 @@ import { AppDispatch, RootState } from "~/store";
 import { getCategories } from "~/store/reducers/appSlice";
 import { Search } from "../Search";
 import styles from "./Header.module.scss";
+import { logout as apiLogout } from "~/services/authService";
+import { setCurrentUser, login } from "~/store/reducers/authSlice";
+import { useNavigate } from "react-router-dom";
 
 const cx = classNames.bind(styles);
 
 const Header: React.FC = () => {
 	const { categories } = useSelector((state: RootState) => state.app);
+	const { user, loggedIn } = useSelector((state: RootState) => state.auth);
 	const dispatch = useDispatch<AppDispatch>();
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		dispatch(getCategories());
 	}, []);
+
+	const handleLogout = async () => {
+		await apiLogout();
+		dispatch(
+			setCurrentUser({
+				firstName: "",
+				lastName: "",
+				avatar: "",
+				role: "",
+			})
+		);
+		dispatch(
+			login({
+				accessToken: "",
+				loggedIn: false,
+			})
+		);
+		navigate("/dang-nhap");
+	};
 
 	return (
 		<>
@@ -36,15 +60,64 @@ const Header: React.FC = () => {
 					</Link>
 					<Search />
 					<Space className={cx("cart")}>
-						<Link to="/dang-nhap">
-							<Button
-								shape="circle"
-								className={cx("btn")}
-								size="large"
-								icon={<AiOutlineUser />}
-							/>
-							<span className={cx("quanlity")}>1</span>
-						</Link>
+						{loggedIn ? (
+							<Popover
+								placement="bottom"
+								content={
+									<div
+										style={{
+											display: "flex",
+											flexDirection: "column",
+											gap: 8,
+											fontSize: 12,
+										}}
+									>
+										<Link to="/tai-khoan/profile">
+											<Button className={cx("btn")}>Tài khoản của tôi</Button>
+										</Link>
+										<Button
+											className={cx("btn")}
+											onClick={handleLogout}
+										>
+											Đăng xuất
+										</Button>
+									</div>
+								}
+							>
+								<Link
+									to="/tai-khoan/profile"
+									style={{
+										display: "block",
+										width: 40,
+										height: 40,
+									}}
+								>
+									<img
+										src={
+											user.avatar ||
+											"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSIsmpJQm0OTBcGyY-Y3ECq4UMpN2lAcagoQ&usqp=CAU"
+										}
+										alt=""
+										style={{
+											width: "100%",
+											height: "100%",
+											objectFit: "cover",
+											borderRadius: "50%",
+										}}
+									/>
+								</Link>
+							</Popover>
+						) : (
+							<Link to="/dang-nhap">
+								<Button
+									shape="circle"
+									className={cx("btn")}
+									size="large"
+									icon={<AiOutlineUser />}
+								/>
+								<span className={cx("quanlity")}>1</span>
+							</Link>
+						)}
 						<Link to="/gio-hang">
 							<Button
 								shape="circle"

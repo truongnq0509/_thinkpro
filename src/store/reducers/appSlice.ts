@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { IProduct, ICategory, IBrand } from "~/interfaces";
+import { IProduct, ICategory } from "~/interfaces";
 import { IQuery } from "~/interfaces/query";
 import { getCategories as apiGetCategories, getCategory as apiGetCategory } from "~/services/categoryService";
 

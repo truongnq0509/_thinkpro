@@ -6,6 +6,11 @@ export const login = async (data: { email: string; password: string }) => {
 	return response?.data;
 };
 
+export const logout = async () => {
+	const response = await httpRequest.remove("/auth");
+	return response?.data;
+};
+
 export const register = async (data: IUser) => {
 	const response = await httpRequest.create("/auth/signup", data);
 	return response?.data;
@@ -13,6 +18,16 @@ export const register = async (data: IUser) => {
 
 export const me = async () => {
 	const response = await httpRequest.get("/auth/me");
+	return response?.data;
+};
+
+export const updateUser = async (data: any) => {
+	const response = await httpRequest.update("/auth", data);
+	return response?.data;
+};
+
+export const changePassword = async (data: { password: string }) => {
+	const response = await httpRequest.update("/auth/change-password", data);
 	return response?.data;
 };
 

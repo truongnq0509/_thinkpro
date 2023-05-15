@@ -1,11 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
-import appSlice from "./reducers/appSlice";
-import collectionSlice from "./reducers/collectionSlice";
-import authSlice from "./reducers/authSlice";
-import storage from "redux-persist/lib/storage";
 import { combineReducers } from "redux";
 import { persistReducer } from "redux-persist";
-import { getDefaultMiddleware } from "@reduxjs/toolkit";
+import storage from "redux-persist/lib/storage";
+import appSlice from "./reducers/appSlice";
+import authSlice from "./reducers/authSlice";
+import collectionSlice from "./reducers/collectionSlice";
 
 const persistConfig = {
 	key: "root",

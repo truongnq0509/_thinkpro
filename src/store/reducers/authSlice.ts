@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-interface IAuth {
+type initialStateType = {
 	loggedIn: boolean;
 	accessToken: string;
 	user: {
@@ -9,9 +9,9 @@ interface IAuth {
 		avatar: string;
 		role: string;
 	};
-}
+};
 
-const initialState: IAuth = {
+const initialState: initialStateType = {
 	loggedIn: false,
 	accessToken: "",
 	user: {

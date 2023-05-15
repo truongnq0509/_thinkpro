@@ -4,6 +4,7 @@ import type { RouteObject } from "react-router";
 import PrivateRouter from "~/layouts/private";
 // client
 import { DefaultLayout } from "~/layouts/client/DefaultLayout";
+import { LayoutProfile } from "~/layouts/client/LayoutProfile";
 import { HomePage } from "~/pages/client/Home";
 import { CollectionPage } from "~/pages/client/Collection";
 import { SkuPage } from "~/pages/client/Sku";
@@ -14,6 +15,8 @@ import { SearchPage } from "~/pages/client/Search";
 import { VerifyPage } from "~/pages/client/Verify";
 import { SendEmailPage } from "~/pages/client/SendEmail";
 import { ResetPasswordPage } from "~/pages/client/ResetPassword";
+import { ProfilePage } from "~/pages/client/Profile";
+import { ChangePasswordPage } from "~/pages/client/ChangePassword";
 
 // admin
 import { AdminLayout } from "~/layouts/admin/AdminLayout";
@@ -58,6 +61,20 @@ const routes: RouteObject[] = [
 			{
 				path: "tim-kiem",
 				element: <SearchPage />,
+			},
+			{
+				path: "/tai-khoan",
+				element: <LayoutProfile />,
+				children: [
+					{
+						path: "profile",
+						element: <ProfilePage />,
+					},
+					{
+						path: "mat-khau",
+						element: <ChangePasswordPage />,
+					},
+				],
 			},
 			{
 				path: ":slug",
