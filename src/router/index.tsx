@@ -17,6 +17,7 @@ import { SendEmailPage } from "~/pages/client/SendEmail";
 import { ResetPasswordPage } from "~/pages/client/ResetPassword";
 import { ProfilePage } from "~/pages/client/Profile";
 import { ChangePasswordPage } from "~/pages/client/ChangePassword";
+import { CartPage } from "~/pages/client/Cart";
 
 // admin
 import { AdminLayout } from "~/layouts/admin/AdminLayout";
@@ -63,7 +64,7 @@ const routes: RouteObject[] = [
 				element: <SearchPage />,
 			},
 			{
-				path: "/tai-khoan",
+				path: "tai-khoan",
 				element: <LayoutProfile />,
 				children: [
 					{
@@ -75,6 +76,10 @@ const routes: RouteObject[] = [
 						element: <ChangePasswordPage />,
 					},
 				],
+			},
+			{
+				path: "gio-hang",
+				element: <CartPage />,
 			},
 			{
 				path: ":slug",

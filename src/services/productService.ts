@@ -20,6 +20,11 @@ export const getProducts = async (
 	return response?.data;
 };
 
+export const getStock = async (id: string) => {
+	const response = await httpRequest.get(`/inventories/${id}`);
+	return response?.data;
+};
+
 // lấy ra cách sản phẩm đã bị xóa mềm
 export const getStore = async () => {
 	const response = await httpRequest.get(`/products/store`);

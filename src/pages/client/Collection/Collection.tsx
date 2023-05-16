@@ -107,10 +107,12 @@ let locale = {
 					color: "#fff",
 					background: "#0065ee",
 					border: "none",
-					fontWeight: 600,
+					fontWeight: 500,
 					display: "inline-flex",
 					alignItems: "center",
-					padding: "22px 12px",
+					padding: "0 16px",
+					height: "48px",
+					borderRadius: 4,
 				}}
 			>
 				Tư vấn miễn phí

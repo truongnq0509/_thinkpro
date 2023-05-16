@@ -16,21 +16,26 @@ import styles from "./Header.module.scss";
 import { logout as apiLogout } from "~/services/authService";
 import { setCurrentUser, login } from "~/store/reducers/authSlice";
 import { useNavigate } from "react-router-dom";
+import { getQuantity, setCartQuantity } from "~/store/reducers/cartSlice";
 
 const cx = classNames.bind(styles);
 
 const Header: React.FC = () => {
 	const { categories } = useSelector((state: RootState) => state.app);
 	const { user, loggedIn } = useSelector((state: RootState) => state.auth);
+	const { quantity } = useSelector((state: RootState) => state.cart);
 	const dispatch = useDispatch<AppDispatch>();
 	const navigate = useNavigate();
 
 	useEffect(() => {
 		dispatch(getCategories());
+		if (loggedIn) dispatch(getQuantity());
 	}, []);
 
 	const handleLogout = async () => {
 		await apiLogout();
+
+		// xóa user localstorage
 		dispatch(
 			setCurrentUser({
 				firstName: "",
@@ -39,12 +44,17 @@ const Header: React.FC = () => {
 				role: "",
 			})
 		);
+
+		//
 		dispatch(
 			login({
 				accessToken: "",
 				loggedIn: false,
 			})
 		);
+
+		// xóa giỏ hàng
+		dispatch(setCartQuantity(-quantity));
 		navigate("/dang-nhap");
 	};
 
@@ -115,7 +125,6 @@ const Header: React.FC = () => {
 									size="large"
 									icon={<AiOutlineUser />}
 								/>
-								<span className={cx("quanlity")}>1</span>
 							</Link>
 						)}
 						<Link to="/gio-hang">
@@ -125,7 +134,7 @@ const Header: React.FC = () => {
 								size="large"
 								icon={<AiOutlineShoppingCart />}
 							/>
-							<span className={cx("quanlity")}>1</span>
+							{quantity ? <span className={cx("quantity")}>{quantity}</span> : ""}
 						</Link>
 					</Space>
 				</header>

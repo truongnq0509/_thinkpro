@@ -21,4 +21,5 @@ export interface IProduct {
 	deleted?: boolean;
 	_v?: string;
 	loading?: boolean;
+	stock?: number;
 }

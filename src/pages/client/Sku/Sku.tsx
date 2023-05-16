@@ -4,7 +4,7 @@ import ListItem from "@tiptap/extension-list-item";
 import TextStyle from "@tiptap/extension-text-style";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { Button, Col, InputNumber, Modal, Row, Space } from "antd";
+import { Button, Col, InputNumber, Modal, Row, Space, message } from "antd";
 import classNames from "classnames/bind";
 import React, { useEffect, useState } from "react";
 import Marquee from "react-fast-marquee";
@@ -32,10 +32,15 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { IProduct } from "~/interfaces";
-import { getProduct as apiGetProduct } from "~/services/productService";
+import { getProduct as apiGetProduct, getStock as apiGetStock } from "~/services/productService";
 import { formatNumber, percent } from "~/utils/fc";
 import styles from "./Sku.module.scss";
 import { useTitle } from "~/hooks";
+import { addToCart as apiAddToCart } from "~/services/cartService";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "~/store";
+import { useNavigate } from "react-router-dom";
+import { setCartQuantity } from "~/store/reducers/cartSlice";
 
 type Props = {};
 const cx = classNames.bind(styles);
@@ -119,10 +124,14 @@ const authenticities: TList[] = [
 
 const Sku = (props: Props) => {
 	const { slug } = useParams();
+	const navigate = useNavigate();
 	const { pathname } = useLocation();
+	const dispatch = useDispatch<AppDispatch>();
 	const [product, setProduct] = useState<IProduct>({});
 	const [content, setContent] = useState<string>("");
 	const [thumbsSwiper, setThumbsSwiper] = useState(null);
+	const [quantity, setQuantity] = useState<number>(1);
+	const [loading, setLoading] = useState<boolean>(false);
 	const [modalOpen, setModalOpen] = useState({
 		confidence: false,
 		attribute: false,
@@ -130,6 +139,8 @@ const Sku = (props: Props) => {
 		description: false,
 		authenticity: false,
 	});
+
+	const { loggedIn } = useSelector((state: RootState) => state.auth);
 
 	useTitle(`${product.name}, Trả góp 0% | THINKPRO`);
 
@@ -174,7 +185,13 @@ const Sku = (props: Props) => {
 	useEffect(() => {
 		const fetchApi = async () => {
 			const response = await apiGetProduct(slug as string);
-			setProduct(response?.data);
+			const {
+				data: { stock },
+			} = await apiGetStock(response?.data?._id);
+			setProduct({
+				...response?.data,
+				stock,
+			});
 			setContent(response?.data.description as string);
 		};
 		fetchApi();
@@ -186,6 +203,34 @@ const Sku = (props: Props) => {
 			editor2.commands.setContent(content.replace(/data-src=/g, "src="));
 		}
 	}, [editor1, editor2, content]);
+
+	const handleAddToCart = async () => {
+		if (!loggedIn) {
+			navigate("/dang-nhap");
+			return false;
+		}
+		setLoading(true);
+		try {
+			await apiAddToCart({
+				productId: product?._id as string,
+				quantity,
+			});
+
+			dispatch(setCartQuantity(quantity));
+			setLoading(false);
+
+			message.open({
+				type: "success",
+				content: "Thêm vào giỏ hàng thành công",
+			});
+		} catch (error) {
+			setLoading(false);
+			message.open({
+				type: "error",
+				content: "Thêm vào giỏ hàng thất bại",
+			});
+		}
+	};
 
 	return (
 		<section className={cx("wrapper")}>
@@ -820,11 +865,13 @@ const Sku = (props: Props) => {
 									<p>Số Lượng</p>
 									<InputNumber
 										min={1}
+										max={5}
 										defaultValue={1}
 										controls={{
 											upIcon: <MdKeyboardArrowUp size={16} />,
 											downIcon: <MdKeyboardArrowDown size={16} />,
 										}}
+										onChange={(e) => setQuantity(e as number)}
 										style={{
 											padding: "2px 0px",
 											borderRadius: 4,
@@ -859,6 +906,9 @@ const Sku = (props: Props) => {
 												color: "#fff",
 												backgroundColor: "#fe3464",
 											}}
+											loading={loading}
+											onClick={handleAddToCart}
+											disabled={product?.stock == 0 ? true : false}
 										>
 											Thêm vào giỏ
 										</Button>
@@ -874,6 +924,8 @@ const Sku = (props: Props) => {
 												backgroundColor: "#fe3464",
 												marginLeft: 8,
 											}}
+											loading={loading}
+											disabled={product?.stock == 0 ? true : false}
 										>
 											Mua ngay
 										</Button>
