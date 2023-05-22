@@ -35,7 +35,7 @@ const LayoutProfile = (props: Props) => {
 							/>
 							<div className={cx("profile__info")}>
 								<span>{`${user?.firstName} ${user?.lastName}`}</span>
-								<Link to="/tai-khoan">
+								<Link to="/tai-khoan/profile">
 									<BiEditAlt />
 									<span>Sửa hồ sơ</span>
 								</Link>
@@ -56,7 +56,7 @@ const LayoutProfile = (props: Props) => {
 									- Đổi mật khẩu
 								</NavLink>
 								<NavLink
-									to=""
+									to="/tai-khoan/don-mua"
 									className={cx("profile__link")}
 								>
 									- Đơn mua

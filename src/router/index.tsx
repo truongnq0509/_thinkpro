@@ -18,6 +18,10 @@ import { ResetPasswordPage } from "~/pages/client/ResetPassword";
 import { ProfilePage } from "~/pages/client/Profile";
 import { ChangePasswordPage } from "~/pages/client/ChangePassword";
 import { CartPage } from "~/pages/client/Cart";
+import { CheckoutPage } from "~/pages/client/Checkout";
+import { PurchasePage } from "~/pages/client/Purchase";
+import { OrderPage } from "~/pages/client/Order";
+import { ThanksPage } from "~/pages/client/Thanks";
 
 // admin
 import { AdminLayout } from "~/layouts/admin/AdminLayout";
@@ -52,6 +56,10 @@ const routes: RouteObject[] = [
 		element: <ResetPasswordPage />,
 	},
 	{
+		path: "/thanks",
+		element: <ThanksPage />,
+	},
+	{
 		path: "/",
 		element: <DefaultLayout />,
 		children: [
@@ -75,11 +83,23 @@ const routes: RouteObject[] = [
 						path: "mat-khau",
 						element: <ChangePasswordPage />,
 					},
+					{
+						path: "don-mua",
+						element: <PurchasePage />,
+					},
+					{
+						path: "don-mua/:id",
+						element: <OrderPage />,
+					},
 				],
 			},
 			{
 				path: "gio-hang",
 				element: <CartPage />,
+			},
+			{
+				path: "checkout",
+				element: <CheckoutPage />,
 			},
 			{
 				path: ":slug",

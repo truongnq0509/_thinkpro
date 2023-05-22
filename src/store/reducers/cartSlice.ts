@@ -13,6 +13,7 @@ type initialStateType = {
 		products: any;
 		bill: number;
 	};
+	orderId: string;
 };
 
 const initialState: initialStateType = {
@@ -22,6 +23,7 @@ const initialState: initialStateType = {
 		products: [],
 		bill: 0,
 	},
+	orderId: "",
 };
 
 const cartSlice = createSlice({
@@ -30,6 +32,12 @@ const cartSlice = createSlice({
 	reducers: {
 		setCartQuantity(state, action) {
 			state.quantity += action.payload;
+		},
+		setCart(state, action) {
+			state.cart = action.payload;
+		},
+		setOrderId(state, action) {
+			state.orderId = action.payload;
 		},
 	},
 	extraReducers(builder) {
@@ -44,5 +52,5 @@ const cartSlice = createSlice({
 	},
 });
 
-export const { setCartQuantity } = cartSlice.actions;
+export const { setCartQuantity, setOrderId, setCart } = cartSlice.actions;
 export default cartSlice.reducer;

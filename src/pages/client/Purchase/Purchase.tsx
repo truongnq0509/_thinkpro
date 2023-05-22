@@ -1,17 +1,14 @@
-import { Button, Col, InputNumber, List, Row } from "antd";
+import { useState, useEffect } from "react";
 import classNames from "classnames/bind";
-import { useEffect, useState } from "react";
-import { CiCircleRemove } from "react-icons/ci";
-import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
-import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import { useDebounce, useTitle } from "~/hooks";
-import { deleteProductInCart as apiDeleteProductInCart, addToCart as apiUpdateCart } from "~/services/cartService";
-import { AppDispatch, RootState } from "~/store";
-import { getQuantity, setCartQuantity } from "~/store/reducers/cartSlice";
+import styles from "./Purchase.module.scss";
+import { getOrderByUser as apiGetOrderByUser } from "~/services/orderService";
+import { List, Button, Space, Tabs } from "antd";
 import { formatNumber } from "~/utils/fc";
-import styles from "./Cart.module.scss";
-import { useNavigate } from "react-router-dom";
+import moment from "moment/moment";
+import type { TabsProps } from "antd";
+import Swal from "sweetalert2";
+import { cancelOrder as apiChangeOrderStatus } from "~/services/orderService";
+import { Link } from "react-router-dom";
 
 type Props = {};
 const cx = classNames.bind(styles);
@@ -147,158 +144,263 @@ let locale = {
 					style={{ fill: "rgb(0, 71, 167)" }}
 				></path>
 			</svg>
-			<h4>Giỏ hàng trống</h4>
+			<h4>Không có đơn hàng nào</h4>
 			<p className={cx("empty__text")}>Hãy thoái mãi lựa sản phẩm bạn nhé</p>
-			<Button
-				size="large"
-				style={{
-					color: "#fff",
-					background: "#0065ee",
-					border: "none",
-					fontWeight: 500,
-					display: "inline-flex",
-					alignItems: "center",
-					padding: "0 16px",
-					height: "48px",
-					borderRadius: 4,
-				}}
-			>
-				<Link to="/">Khám phá ngay</Link>
-			</Button>
 		</span>
 	),
 };
 
-const Cart = (props: Props) => {
-	const [product, setProduct] = useState<any>(null);
-	const debounceQuantity = useDebounce(product?.quantity, 700);
-	const dispatch = useDispatch<AppDispatch>();
-	const navigate = useNavigate();
-	useTitle("Giỏ Hàng");
-
-	const {
-		cart: { products, bill },
-		quantity: cartQuantity,
-	} = useSelector((state: RootState) => state.cart);
+const Purchase = (props: Props) => {
+	const [orders, setOrders] = useState<any>([]);
+	const [filter, setFilter] = useState<any>(orders);
+	const [key, setKey] = useState<any>(1);
+	const [loading, setLoading] = useState<boolean>(false);
 
 	useEffect(() => {
-		if (cartQuantity) dispatch(getQuantity());
-	}, [cartQuantity]);
+		const fetchApi = async () => {
+			const { data } = await apiGetOrderByUser();
+			setOrders(data);
+			setFilter(data);
+		};
+		fetchApi();
+	}, []);
 
-	useEffect(() => {
-		const fetchApi = async () => await apiUpdateCart(product);
-		if (product) {
-			fetchApi();
-			dispatch(getQuantity());
+	const checkOrderStatus = (status: string) => {
+		switch (status) {
+			case "processing":
+				return {
+					status: "Đang xử lý",
+					color: "#ffe066",
+					background: "#ffe0661a",
+				};
+			case "confirmed":
+				return {
+					status: "Đã xác nhận",
+					color: "#0abb87",
+					background: "#0abb871a",
+				};
+			case "delivering":
+				return {
+					status: "Đang vận chuyển",
+					color: "#0abb87",
+					background: "#0abb871a",
+				};
+			case "cancelled":
+				return {
+					status: "Đã hủy",
+					color: "#fe3464",
+					background: "#fe34641a",
+				};
+			case "delivered":
+				return {
+					status: "Hoàn thành",
+					color: "#0abb87",
+					background: "#0abb871a",
+				};
 		}
-	}, [debounceQuantity]);
-
-	const handleDeleteProductInCart = async (id: string, quantity: number) => {
-		await apiDeleteProductInCart(id);
-		dispatch(setCartQuantity(-quantity));
 	};
+
+	const filterOrderStatus = (key: any) => {
+		let arr = [];
+		setKey(key);
+		switch (key) {
+			case "1":
+				arr = orders;
+				break;
+			case "2":
+				arr = orders.filter((order: any) => !order?.payment?.status && order?.status !== "cancelled");
+				break;
+			case "3":
+				arr = orders.filter((order: any) => order?.status === "delivering");
+				break;
+			case "4":
+				arr = orders.filter((order: any) => order?.status === "delivered" && order?.payment?.status);
+				break;
+			case "5":
+				arr = orders.filter((order: any) => order?.status === "cancelled");
+				break;
+		}
+		setFilter(arr);
+	};
+
+	const handleOrderCancel = async (id: string) => {
+		try {
+			await apiChangeOrderStatus(
+				{
+					status: "cancelled",
+				},
+				id
+			);
+			const newOrders = filter.map((order: any) => {
+				if (order?._id == id) {
+					order.status = "cancelled";
+				}
+				return order;
+			});
+			setFilter(newOrders);
+			Swal.fire("Đã hủy", "", "success");
+		} catch (error) {
+			Swal.fire("Thất bại", "", "error");
+		}
+	};
+
+	const children = (
+		<List
+			grid={{ gutter: 12, xs: 1, sm: 1, md: 1, lg: 1, xl: 1, xxl: 1 }}
+			dataSource={filter}
+			locale={locale}
+			renderItem={(order: any) => {
+				let showButton = true;
+				const currentTime = new Date(); // Thời gian hiện tại
+				const pastTime = new Date(order?.createdAt); // Thời gian cần so sánh
+				// Thêm 15 phút vào thời gian đã trôi qua
+				const fifteenMinutesLater = new Date(pastTime.getTime() + 15 * 60 * 1000);
+
+				// Vượt quá thời gian 15 phút
+				if (currentTime > fifteenMinutesLater || order?.payment?.status) {
+					showButton = false;
+				}
+
+				return (
+					<List.Item>
+						<div className={cx("order__container")}>
+							<div className="order__title">
+								<h1>Mã đơn hàng #{order?._id}</h1>
+								<p>Ngày đặt hàng: {moment(order?.createdAt).format("DD-MM-YYYY HH:mm:ss")}</p>
+								<Link
+									to={`/tai-khoan/don-mua/${order?._id}`}
+									style={{
+										fontSize: 12,
+										fontWeight: 500,
+									}}
+								>
+									Xem chi tiết
+								</Link>
+							</div>
+							<Space
+								size="small"
+								split={"|"}
+							>
+								{key != "2" && (
+									<Button
+										className={cx("btn")}
+										style={{
+											color: checkOrderStatus(order?.status as string)?.color,
+											backgroundColor: checkOrderStatus(order?.status as string)?.background,
+											cursor: "default",
+										}}
+									>
+										{checkOrderStatus(order?.status as string)?.status}
+									</Button>
+								)}
+
+								{(key == "2" || key == "3" || key == "4") && (
+									<Button
+										className={cx("btn")}
+										style={{
+											color: order?.payment?.status ? "#0abb87" : "#fe3464",
+											backgroundColor: order?.payment?.status ? "#0abb871a" : "#fe34641a",
+											cursor: "default",
+										}}
+									>
+										{order?.payment?.status ? "Đã thanh toán" : "Chưa thanh toán"}
+									</Button>
+								)}
+								{((key == "1" && order?.status == "processing" && showButton) ||
+									(key == "1" && order?.status == "confirmed" && showButton)) && (
+									<Button
+										className={cx("btn")}
+										style={{
+											color: "#fe3464",
+											backgroundColor: "#fe34641a",
+										}}
+										loading={loading}
+										onClick={() => handleOrderCancel(order?._id)}
+									>
+										Hủy
+									</Button>
+								)}
+							</Space>
+						</div>
+						{order?.products?.map((product: any, index: number) => (
+							<div
+								key={index}
+								className={cx("order__item")}
+							>
+								<div className={cx("order__img")}>
+									<img
+										src={product?.thumbnail?.path}
+										alt="thubmnail"
+									/>
+								</div>
+								<div className={cx("order__box")}>
+									<div className={cx("order__top")}>
+										<div className={cx("order__top--left")}>
+											<h1>{product?.name}</h1>
+											<p>x {product?.quantity}</p>
+										</div>
+										<div className={cx("order__top--right")}>
+											<span>{formatNumber(`${product?.price}`)}</span>
+											<span>{formatNumber(`${product?.discount}`)}</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						))}
+						<div className={cx("order__bill")}>
+							<span>
+								Thành Tiền: <span>{formatNumber(`${order?.bill}`)}</span>
+							</span>
+						</div>
+					</List.Item>
+				);
+			}}
+		/>
+	);
+
+	const items: TabsProps["items"] = [
+		{
+			key: "1",
+			label: `Tất Cả`,
+			children,
+		},
+		{
+			key: "2",
+			label: `Chờ thanh toán`,
+			children,
+		},
+		{
+			key: "3",
+			label: `Vận chuyển`,
+			children,
+		},
+		{
+			key: "4",
+			label: `Hoàn thành`,
+			children,
+		},
+		{
+			key: "5",
+			label: `Đã hủy`,
+			children,
+		},
+	];
 
 	return (
 		<div className={cx("wrapper")}>
-			<h1>{`Giỏ hàng (${cartQuantity})`}</h1>
-			<div className={cx("cart")}>
-				<Row gutter={[32, 32]}>
-					<Col
-						xs={24}
-						md={16}
-					>
-						<div className={cx("cart__left")}>
-							<List
-								grid={{ gutter: 12, xs: 1, sm: 1, md: 1, lg: 1, xl: 1, xxl: 1 }}
-								dataSource={products}
-								locale={locale}
-								renderItem={(product: any) => (
-									<List.Item>
-										<div className={cx("cart__item")}>
-											<div className={cx("cart__img")}>
-												<img
-													src={product?.productId?.thumbnail?.path}
-													alt="thubmnail"
-												/>
-											</div>
-											<div className={cx("cart__box")}>
-												<div className={cx("cart__top")}>
-													<div className={cx("cart__top--left")}>
-														<h1>{product?.productId?.name}</h1>
-													</div>
-													<div className={cx("cart__top--right")}>
-														<span>{formatNumber(`${product?.productId?.price}`)}</span>
-														<span>{formatNumber(`${product?.productId?.discount}`)}</span>
-													</div>
-												</div>
-												<div className={cx("cart__bottom")}>
-													<div className={cx("cart__bottom--left")}>
-														<InputNumber
-															min={1}
-															max={1000}
-															defaultValue={product?.quantity}
-															controls={{
-																upIcon: <MdKeyboardArrowUp size={16} />,
-																downIcon: <MdKeyboardArrowDown size={16} />,
-															}}
-															onChange={(e) =>
-																setProduct({
-																	productId: product?.productId?._id,
-																	quantity: e,
-																})
-															}
-															style={{
-																padding: "2px 0px",
-																borderRadius: 4,
-																width: 60,
-															}}
-														/>
-													</div>
-													<div className={cx("cart__bottom--right")}>
-														<span
-															onClick={() =>
-																handleDeleteProductInCart(
-																	product?.productId?._id as string,
-																	product?.quantity as number
-																)
-															}
-														>
-															Xóa <CiCircleRemove size={14} />
-														</span>
-													</div>
-												</div>
-											</div>
-										</div>
-									</List.Item>
-								)}
-							/>
-						</div>
-					</Col>
-					<Col
-						xs={24}
-						md={8}
-					>
-						<div className={cx("cart__right")}>
-							<h5>Tóm tắt đơn hàng</h5>
-							<div className={cx("line")}></div>
-							<div className={cx("cart__right--total")}>
-								<span>Tổng cộng</span>
-								<span>{formatNumber(`${bill}`)}</span>
-							</div>
-							<Button
-								size="middle"
-								disabled={cartQuantity ? false : true}
-								className={cx("btn")}
-								onClick={() => navigate("/checkout")}
-							>
-								Đặt Hàng
-							</Button>
-						</div>
-					</Col>
-				</Row>
+			<div className={cx("header")}>
+				<h1>Đơn Hàng Của Tôi</h1>
+				<p>Mọi thông tin cơ bản về đơn hàng của bạn</p>
+			</div>
+			<div className={cx("body")}>
+				<Tabs
+					defaultActiveKey="1"
+					items={items}
+					onChange={filterOrderStatus}
+				/>
 			</div>
 		</div>
 	);
 };
 
-export default Cart;
+export default Purchase;

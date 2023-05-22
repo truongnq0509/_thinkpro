@@ -10,7 +10,7 @@ import cartSlice from "./reducers/cartSlice";
 const persistConfig = {
 	key: "root",
 	storage,
-	blacklist: ["app", "collection"],
+	blacklist: ["app", "collection", "cart"],
 };
 
 const authPersistConfig = {

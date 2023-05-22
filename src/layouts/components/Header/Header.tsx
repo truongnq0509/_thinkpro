@@ -29,7 +29,7 @@ const Header: React.FC = () => {
 
 	useEffect(() => {
 		dispatch(getCategories());
-		if (loggedIn) dispatch(getQuantity());
+		if (loggedIn && quantity) dispatch(getQuantity());
 	}, []);
 
 	const handleLogout = async () => {
@@ -84,6 +84,9 @@ const Header: React.FC = () => {
 									>
 										<Link to="/tai-khoan/profile">
 											<Button className={cx("btn")}>Tài khoản của tôi</Button>
+										</Link>
+										<Link to="/tai-khoan/don-mua">
+											<Button className={cx("btn")}>Đơn hàng</Button>
 										</Link>
 										<Button
 											className={cx("btn")}
