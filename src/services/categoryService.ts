@@ -9,8 +9,15 @@ export const getCategory = async (query: IQuery) => {
 	return response?.data;
 };
 
-export const getCategories = async () => {
-	const response = await httpRequest.get("/categories");
+export const getCategories = async (
+	_limit: number = 10,
+	_order: string = "desc",
+	_sort: string = "createdAt",
+	_page: number = 1
+) => {
+	const response = await httpRequest.get(
+		`/categories?_page=${_page}&_limit=${_limit}&_order=${_order}&_sort=${_sort}`
+	);
 	return response?.data;
 };
 

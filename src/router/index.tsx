@@ -33,6 +33,7 @@ import {
 	StoreProductPage,
 	UpdateProductPage,
 } from "~/pages/admin/Products";
+import { CategoriesManagerPage } from "~/pages/admin/Categories";
 
 const routes: RouteObject[] = [
 	{
@@ -154,6 +155,10 @@ const routes: RouteObject[] = [
 						element: <UpdateProductPage />,
 					},
 				],
+			},
+			{
+				path: "categories",
+				element: <CategoriesManagerPage />,
 			},
 		],
 	},

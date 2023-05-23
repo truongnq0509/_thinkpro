@@ -10,6 +10,7 @@ import { Link, useOutletContext } from "react-router-dom";
 import { IProduct } from "~/interfaces";
 import { formatNumber } from "~/utils/fc";
 import styles from "./Products.module.scss";
+import { getProducts as apiGetProducts } from "~/services/productService";
 
 const { confirm } = Modal;
 
@@ -17,7 +18,7 @@ type Props = {};
 const cx = classNames.bind(styles);
 
 const Products: React.FC = (props: Props) => {
-	const [{ products, count, handleRemoveProduct, paginate }] = useOutletContext<any>();
+	const [{ products, count, handleRemoveProduct, paginate, emitData }] = useOutletContext<any>();
 
 	const showDeleteConfirm = (id: string) => {
 		confirm({
@@ -193,16 +194,24 @@ const Products: React.FC = (props: Props) => {
 						</Space>
 					</Col>
 				</Row>
+				<Table
+					columns={columns}
+					dataSource={products as IProduct[]}
+					pagination={{
+						pageSize: paginate?.limit,
+						total: paginate?.totalDocs,
+						showSizeChanger: false,
+						onChange: async (page) => {
+							const { data } = await apiGetProducts(10, "desc", "createdAt", page);
+							emitData(data);
+						},
+					}}
+					rowKey={"_id"}
+					style={{
+						marginTop: "16px",
+					}}
+				/>
 			</div>
-			<Table
-				columns={columns}
-				dataSource={products as IProduct[]}
-				pagination={false}
-				rowKey={"_id"}
-				style={{
-					marginTop: "16px",
-				}}
-			/>
 		</>
 	);
 };

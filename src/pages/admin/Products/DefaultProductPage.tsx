@@ -200,6 +200,9 @@ const DefaultProductPage: React.FC = (props: Props): JSX.Element => {
 		}
 	};
 
+	// truyền dữ lên
+	const emitData = (data: any) => setProducts(data);
+
 	return (
 		<Outlet
 			context={[
@@ -213,6 +216,7 @@ const DefaultProductPage: React.FC = (props: Props): JSX.Element => {
 					handleCreateProduct,
 					handleUpdateProduct,
 					handleRestoreProduct,
+					emitData,
 				},
 			]}
 		/>

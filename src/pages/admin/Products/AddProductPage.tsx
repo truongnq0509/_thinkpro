@@ -5,7 +5,7 @@ import type { UploadFile } from "antd/es/upload/interface";
 import classNames from "classnames/bind";
 import moment from "moment/moment";
 import { useEffect, useState } from "react";
-import { Controller, useForm, useFieldArray } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { BsPatchCheck } from "react-icons/bs";
 import { IoAddOutline } from "react-icons/io5";
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
@@ -608,7 +608,6 @@ const AddProductPage = (props: Props) => {
 									backgroundColor: "#228be61a",
 									border: "none",
 									height: 48,
-									fontSize: 14,
 									padding: "0 16px",
 								}}
 								htmlType="submit"
@@ -628,7 +627,6 @@ const AddProductPage = (props: Props) => {
 									backgroundColor: "rgba(253, 57, 122, 0.1)",
 									border: "none",
 									height: 48,
-									fontSize: 14,
 									padding: "0 16px",
 								}}
 								size="middle"
