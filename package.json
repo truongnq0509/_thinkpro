@@ -9,12 +9,19 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
+		"@hocuspocus/provider": "^2.0.6",
 		"@hookform/error-message": "^2.0.1",
 		"@hookform/resolvers": "^3.0.1",
 		"@reduxjs/toolkit": "^1.9.3",
+		"@tiptap/extension-character-count": "^2.0.3",
+		"@tiptap/extension-collaboration": "^2.0.3",
+		"@tiptap/extension-collaboration-cursor": "^2.0.3",
 		"@tiptap/extension-color": "^2.0.3",
+		"@tiptap/extension-highlight": "^2.0.3",
 		"@tiptap/extension-image": "^2.0.3",
 		"@tiptap/extension-list-item": "^2.0.3",
+		"@tiptap/extension-task-item": "^2.0.3",
+		"@tiptap/extension-task-list": "^2.0.3",
 		"@tiptap/react": "^2.0.3",
 		"@tiptap/starter-kit": "^2.0.3",
 		"antd": "^5.4.0",
@@ -37,6 +44,7 @@
 		"react-router-dom": "^6.10.0",
 		"react-slugify": "^3.0.2",
 		"redux-persist": "^6.0.0",
+		"remixicon": "^3.3.0",
 		"sass": "^1.60.0",
 		"sweetalert2": "^11.7.3",
 		"swiper": "^9.2.0"

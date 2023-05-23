@@ -1,0 +1,23 @@
+.menu-item {
+	background-color: transparent;
+	border: none;
+	border-radius: 4px;
+	color: #fff;
+	cursor: pointer;
+	height: 24px;
+	margin-right: 4px;
+	padding: 4px;
+	width: 24px;
+
+	svg {
+		fill: currentColor;
+		height: 100%;
+		width: 100%;
+		font-size: 16px;
+	}
+
+	&:hover,
+	&.is-active {
+		background-color: #303030;
+	}
+}

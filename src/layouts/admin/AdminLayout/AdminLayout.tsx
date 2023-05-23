@@ -9,7 +9,7 @@ import { FiSearch } from "react-icons/fi";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { IoSettingsOutline } from "react-icons/io5";
 import { TbBrandCake } from "react-icons/tb";
-import { Link, Outlet } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
 import styles from "./AdminLayout.module.scss";
 
 const { Content, Sider, Header } = Layout;
@@ -35,32 +35,12 @@ function getItem(
 }
 
 const items: MenuProps["items"] = [
-	getItem(<Link to="/admin">Dashboard</Link>, "1", <AiOutlineHome size="18px" />),
-	getItem(<Link to="/admin/products">Products</Link>, "2", <BsPhone size="18px" />),
-	getItem(<Link to="/admin/categories">Categories</Link>, "3", <BiCategoryAlt size="18px" />),
-	getItem(<Link to="/admin/brands">Brands</Link>, "4", <TbBrandCake size="18px" />),
-
-	getItem(
-		null,
-		"grp",
-		null,
-		[
-			getItem(<Link to="/admin/settings">Settings</Link>, "5", <IoSettingsOutline size="18px" />),
-			getItem(
-				<Link
-					to="/"
-					onClick={() => {
-						localStorage.removeItem("user");
-					}}
-				>
-					Logout
-				</Link>,
-				"6",
-				<AiOutlineLogout size="18px" />
-			),
-		],
-		"group"
-	),
+	getItem(<NavLink to="/admin">Dashboard</NavLink>, "1", <AiOutlineHome size="18px" />),
+	getItem(<NavLink to="/admin/products">Products</NavLink>, "2", <BsPhone size="18px" />),
+	getItem(<NavLink to="/admin/categories">Categories</NavLink>, "3", <BiCategoryAlt size="18px" />),
+	getItem(<NavLink to="/admin/brands">Brands</NavLink>, "4", <TbBrandCake size="18px" />),
+	getItem(<NavLink to="/admin/settings">Settings</NavLink>, "5", <IoSettingsOutline size="18px" />),
+	getItem(<NavLink to="/">Logout</NavLink>, "6", <AiOutlineLogout size="18px" />),
 ];
 
 const AdminLayout: React.FC = () => {
@@ -76,6 +56,12 @@ const AdminLayout: React.FC = () => {
 					width="240"
 					style={{
 						backgroundColor: "white",
+						overflow: "auto",
+						height: "100vh",
+						position: "fixed",
+						left: 0,
+						top: 0,
+						bottom: 0,
 					}}
 				>
 					<div className={cx("logo")}>
@@ -91,10 +77,13 @@ const AdminLayout: React.FC = () => {
 						style={{
 							border: "none",
 						}}
+						className={cx("nav")}
 						items={items}
 					/>
 				</Sider>
-				<Layout style={{ padding: "0 48px 24px 24px", minHeight: "100vh", background: "#f6f9fc" }}>
+				<Layout
+					style={{ padding: "0 48px 24px 24px", minHeight: "100vh", background: "#f6f9fc", marginLeft: 240 }}
+				>
 					<Header
 						style={{
 							display: "flex",

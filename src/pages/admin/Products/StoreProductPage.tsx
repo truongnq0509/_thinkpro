@@ -83,6 +83,7 @@ const StoreProductPage: React.FC = (props: Props) => {
 					<Tag
 						bordered={false}
 						color={!value ? "#0abb871a" : "#fd397a1a"}
+						className={cx("tag")}
 					>
 						<span
 							style={{
@@ -106,6 +107,7 @@ const StoreProductPage: React.FC = (props: Props) => {
 							backgroundColor: "#228be61a",
 							border: "none",
 						}}
+						className={cx("btn")}
 						onClick={() => handleRestoreProduct(product._id as string, product)}
 					>
 						Khôi Phục
@@ -116,6 +118,7 @@ const StoreProductPage: React.FC = (props: Props) => {
 							backgroundColor: "#fd397a1a",
 							border: "none",
 						}}
+						className={cx("btn")}
 						onClick={() => showDeleteConfirm(product._id as string)}
 					>
 						Xóa vĩnh viễn

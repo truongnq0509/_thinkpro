@@ -12,7 +12,7 @@ export const getProduct = async (slug: string) => {
 
 export const getProducts = async (
 	_limit: number = 10,
-	_order: string = "asc",
+	_order: string = "desc",
 	_sort: string = "createdAt",
 	_page: number = 1
 ) => {
@@ -22,6 +22,16 @@ export const getProducts = async (
 
 export const getStock = async (id: string) => {
 	const response = await httpRequest.get(`/inventories/${id}`);
+	return response?.data;
+};
+
+export const updateStock = async (data: { quantity: number; productId: string }) => {
+	const response = await httpRequest.update(`/inventories`, data);
+	return response?.data;
+};
+
+export const addStock = async (data: { quantity: number; productId: string }) => {
+	const response = await httpRequest.create(`/inventories`, data);
 	return response?.data;
 };
 

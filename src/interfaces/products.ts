@@ -9,7 +9,7 @@ export interface IProduct {
 		filename: string;
 	};
 	description?: string;
-	attributes?: [];
+	attributes?: any;
 	assets?: [];
 	status?: number;
 	categoryId?: any;
@@ -21,5 +21,5 @@ export interface IProduct {
 	deleted?: boolean;
 	_v?: string;
 	loading?: boolean;
-	stock?: number;
+	stock?: any;
 }

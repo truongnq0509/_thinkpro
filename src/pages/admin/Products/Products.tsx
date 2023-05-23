@@ -1,8 +1,8 @@
-import { Button, Col, Modal, Row, Space, Table, Tag } from "antd";
+import { Button, Col, Modal, Row, Space, Table, Tag, Pagination } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import classNames from "classnames/bind";
 import moment from "moment";
-import React from "react";
+import React, { useState } from "react";
 import { AiFillInfoCircle, AiOutlineDelete } from "react-icons/ai";
 import { BsPatchCheck } from "react-icons/bs";
 import { IoAddOutline } from "react-icons/io5";
@@ -17,7 +17,7 @@ type Props = {};
 const cx = classNames.bind(styles);
 
 const Products: React.FC = (props: Props) => {
-	const [{ products, count, handleRemoveProduct }] = useOutletContext<any>();
+	const [{ products, count, handleRemoveProduct, paginate }] = useOutletContext<any>();
 
 	const showDeleteConfirm = (id: string) => {
 		confirm({
@@ -84,6 +84,7 @@ const Products: React.FC = (props: Props) => {
 					<Tag
 						bordered={false}
 						color={!value ? "#0abb871a" : "#fd397a1a"}
+						className={cx("tag")}
 					>
 						<span
 							style={{
@@ -107,6 +108,7 @@ const Products: React.FC = (props: Props) => {
 							backgroundColor: "#fd397a1a",
 							border: "none",
 						}}
+						className={cx("btn")}
 						onClick={() => showDeleteConfirm(product._id as string)}
 					>
 						Xóa
@@ -117,6 +119,7 @@ const Products: React.FC = (props: Props) => {
 							backgroundColor: "#228be61a",
 							border: "none",
 						}}
+						className={cx("btn")}
 					>
 						<Link to={`/admin/products/${product?.slug}`}>Cập Nhật</Link>
 					</Button>
@@ -127,72 +130,75 @@ const Products: React.FC = (props: Props) => {
 
 	return (
 		<>
-			<Row gutter={[0, 0]}>
-				<Col
-					span="12"
-					style={{
-						display: "flex",
-						alignItems: "flex-end",
-					}}
-				>
-					<Space align="end">
-						<h2 className={cx("title")}>Tất Cả Sản Phẩm</h2>
-						<Tag
-							bordered={false}
-							style={{
-								backgroundColor: "#339af01a",
-							}}
-							icon={<BsPatchCheck color="#339af0" />}
-							className={cx("tag")}
-						>
-							<Link
-								to="/admin"
-								style={{ color: "#339af0" }}
+			<div className={cx("wrapper")}>
+				<Row gutter={[0, 0]}>
+					<Col
+						span="12"
+						style={{
+							display: "flex",
+							alignItems: "flex-end",
+						}}
+					>
+						<Space align="end">
+							<h2 className={cx("title")}>Tất Cả Sản Phẩm</h2>
+							<Tag
+								bordered={false}
+								style={{
+									backgroundColor: "#339af01a",
+								}}
+								icon={<BsPatchCheck color="#339af0" />}
+								className={cx("tag")}
 							>
-								thinkpro
-							</Link>
-						</Tag>
-					</Space>
-				</Col>
-				<Col
-					span="12"
-					style={{
-						display: "flex",
-						justifyContent: "flex-end",
-					}}
-				>
-					<Space split="|">
-						<Button
-							className={cx("btn")}
-							icon={<IoAddOutline />}
-							size="middle"
-							style={{
-								color: "#0abb87",
-								backgroundColor: "#0abb871a",
-								border: "none",
-							}}
-						>
-							<Link to="/admin/products/create">Thêm Mới</Link>
-						</Button>
-						<Button
-							className={cx("btn")}
-							icon={<AiOutlineDelete />}
-							size="middle"
-							style={{
-								color: "#fd397a",
-								backgroundColor: "#fd397a1a",
-								border: "none",
-							}}
-						>
-							<Link to="/admin/products/store">Thùng Rác{`(${count})`}</Link>
-						</Button>
-					</Space>
-				</Col>
-			</Row>
+								<Link
+									to="/admin"
+									style={{ color: "#339af0" }}
+								>
+									thinkpro
+								</Link>
+							</Tag>
+						</Space>
+					</Col>
+					<Col
+						span="12"
+						style={{
+							display: "flex",
+							justifyContent: "flex-end",
+						}}
+					>
+						<Space split="|">
+							<Button
+								className={cx("btn")}
+								icon={<IoAddOutline />}
+								size="middle"
+								style={{
+									color: "#0abb87",
+									backgroundColor: "#0abb871a",
+									border: "none",
+								}}
+							>
+								<Link to="/admin/products/create">Thêm Mới</Link>
+							</Button>
+							<Button
+								className={cx("btn")}
+								icon={<AiOutlineDelete />}
+								size="middle"
+								style={{
+									color: "#fd397a",
+									backgroundColor: "#fd397a1a",
+									border: "none",
+								}}
+							>
+								<Link to="/admin/products/store">Thùng Rác{`(${count})`}</Link>
+							</Button>
+						</Space>
+					</Col>
+				</Row>
+			</div>
 			<Table
 				columns={columns}
 				dataSource={products as IProduct[]}
-				rowKey={"slug"}
+				pagination={false}
+				rowKey={"_id"}
 				style={{
 					marginTop: "16px",
 				}}

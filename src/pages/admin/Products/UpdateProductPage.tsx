@@ -14,6 +14,7 @@ import {
 	message,
 	Image,
 	List,
+	Radio,
 } from "antd";
 import type { RcFile, UploadProps } from "antd/es/upload";
 import type { UploadFile } from "antd/es/upload/interface";
@@ -29,10 +30,20 @@ import slugify from "react-slugify";
 import { IBrand, ICategory, IProduct } from "~/interfaces";
 import { getBrands as apiGetBrands } from "~/services/brandService";
 import { getCategories as apiGetCategories } from "~/services/categoryService";
-import { getProduct as apiGetProduct } from "~/services/productService";
+import { getProduct as apiGetProduct, getStock as apiGetStock } from "~/services/productService";
 import { removeFile as apiRemoveFile } from "~/services/uploadService";
 import productSchema from "~/validations/products";
 import styles from "./Products.module.scss";
+import { IoIosArrowDown } from "react-icons/io";
+import Highlight from "@tiptap/extension-highlight";
+import TaskItem from "@tiptap/extension-task-item";
+import TaskList from "@tiptap/extension-task-list";
+import { EditorContent, useEditor } from "@tiptap/react";
+import ImageTiptap from "@tiptap/extension-image";
+import StarterKit from "@tiptap/starter-kit";
+import MenuBar from "~/components/MenuBar/MenuBar";
+import "./Products.module.scss";
+import { IoClose, IoAddSharp } from "react-icons/io5";
 
 const { Option } = Select;
 
@@ -68,7 +79,7 @@ const UpdateProductPage = (props: Props) => {
 	const navigate = useNavigate();
 
 	// state outlet
-	const [{ handleUpdateProduct }] = useOutletContext<any>();
+	const [{ handleUpdateProduct, loading }] = useOutletContext<any>();
 
 	const {
 		control,
@@ -79,6 +90,9 @@ const UpdateProductPage = (props: Props) => {
 	} = useForm<IProduct>({
 		defaultValues: async () => {
 			const { data } = await apiGetProduct(slug as string);
+			const {
+				data: { stock },
+			} = await apiGetStock(data?._id);
 
 			// set id product
 			setId(data._id);
@@ -103,8 +117,9 @@ const UpdateProductPage = (props: Props) => {
 				attributes: data.attributes,
 				assets: data.assets,
 				status: data.status,
-				categoryId: data.category._id,
-				brandId: data.brand._id,
+				categoryId: data.category?._id,
+				brandId: data.brand?._id,
+				stock,
 				createdAt: data.createdAt,
 				updatedAt: `${moment().format()}`,
 			};
@@ -131,6 +146,23 @@ const UpdateProductPage = (props: Props) => {
 		},
 	});
 
+	// tiptap
+	const editor = useEditor({
+		extensions: [
+			StarterKit.configure({
+				history: false,
+			}),
+			Highlight,
+			TaskList,
+			TaskItem,
+			ImageTiptap,
+		],
+		onUpdate: ({ editor }) => {
+			setValue("description", editor.getHTML());
+		},
+		content: "",
+	});
+
 	useEffect(() => {
 		const fetchApi = async () => {
 			const [{ data: categories }, { data: brands }] = await Promise.all([apiGetCategories(), apiGetBrands()]);
@@ -139,6 +171,10 @@ const UpdateProductPage = (props: Props) => {
 		};
 		fetchApi();
 	}, []);
+
+	useEffect(() => {
+		editor?.commands.setContent(getValues("description")?.replace(/data-src=/g, "src=") as string);
+	}, [editor, getValues("description")]);
 
 	const onSubmit = async (data: IProduct) => {
 		const newData = {
@@ -219,6 +255,7 @@ const UpdateProductPage = (props: Props) => {
 			<Form
 				layout="vertical"
 				autoComplete="off"
+				size="small"
 				onFinish={handleSubmit(onSubmit)}
 			>
 				<Row
@@ -227,290 +264,509 @@ const UpdateProductPage = (props: Props) => {
 						marginTop: "32px",
 					}}
 				>
-					<Col span="8">
-						<Form.Item label="Tên">
-							<Controller
-								name="name"
-								control={control}
-								render={({ field: { onChange, value, name, ref }, formState: { errors } }) => (
-									<>
-										<Input
-											size="large"
-											name={name}
-											value={value}
-											ref={ref}
-											onChange={(e) => {
-												const slug = slugify(e.target.value);
-												setValue("slug", slug);
-												onChange(e);
-											}}
-											status={errors.name && "error"}
-											placeholder="Lapttop-XYZ"
-											style={{
-												border: "none",
-												padding: 10,
-											}}
-										/>
-										<ErrorMessage
+					<Col span="14">
+						<div className={cx("form__left")}>
+							<h1>Thông tin cơ bản</h1>
+							<Row gutter={[16, 16]}>
+								<Col span={24}>
+									<Form.Item label="Tên sản phẩm">
+										<Controller
 											name="name"
-											errors={errors}
-											render={({ message }) => {
-												return <p style={{ color: "#f03e3e" }}>{message}</p>;
-											}}
+											control={control}
+											render={({
+												field: { onChange, value, name, ref },
+												formState: { errors },
+											}) => (
+												<>
+													<Input
+														size="large"
+														name={name}
+														value={value}
+														ref={ref}
+														onChange={(e) => {
+															const slug = slugify(e.target.value);
+															setValue("slug", slug);
+															onChange(e);
+														}}
+														status={errors.name && "error"}
+														placeholder="laptop-abc"
+														className={cx("input")}
+													/>
+													<ErrorMessage
+														name="name"
+														errors={errors}
+														render={({ message }) => {
+															return <p style={{ color: "#f03e3e" }}>{message}</p>;
+														}}
+													/>
+												</>
+											)}
 										/>
-									</>
-								)}
-							/>
-						</Form.Item>
-						<Form.Item label="Slug">
-							<Controller
-								name="slug"
-								control={control}
-								render={({ field, formState: { errors } }) => (
-									<>
-										<Input
-											size="large"
-											{...field}
-											status={errors.name && "error"}
-											placeholder="laptop-xyz"
-											disabled
-											style={{
-												border: "none",
-												padding: 10,
-											}}
-										/>
-										<ErrorMessage
+									</Form.Item>
+								</Col>
+								<Col span={24}>
+									<Form.Item label="Slug">
+										<Controller
 											name="slug"
-											errors={errors}
-											render={({ message }) => {
-												return <p style={{ color: "#f03e3e" }}>{message}</p>;
-											}}
+											control={control}
+											render={({ field, formState: { errors } }) => (
+												<>
+													<Input
+														size="large"
+														{...field}
+														status={errors.name && "error"}
+														placeholder="laptop-abc"
+														disabled
+														className={cx("input")}
+													/>
+													<ErrorMessage
+														name="slug"
+														errors={errors}
+														render={({ message }) => {
+															return <p style={{ color: "#f03e3e" }}>{message}</p>;
+														}}
+													/>
+												</>
+											)}
 										/>
-									</>
-								)}
-							/>
-						</Form.Item>
-						<Form.Item label="Giá">
-							<Controller
-								name="price"
-								defaultValue=""
-								control={control}
-								render={({ field, formState: { errors } }) => (
-									<>
-										<Input
-											size="large"
-											{...field}
-											status={errors.price && "error"}
-											placeholder="20.000.000"
-											style={{
-												border: "none",
-												padding: 10,
-											}}
-										/>
-										<ErrorMessage
+									</Form.Item>
+								</Col>
+								<Col span={12}>
+									<Form.Item label="Giá">
+										<Controller
 											name="price"
-											errors={errors}
-											render={({ message }) => {
-												return <p style={{ color: "#f03e3e" }}>{message}</p>;
-											}}
+											defaultValue=""
+											control={control}
+											render={({ field, formState: { errors } }) => (
+												<>
+													<Input
+														size="large"
+														{...field}
+														status={errors.price && "error"}
+														placeholder="20.000.000"
+														className={cx("input")}
+													/>
+													<ErrorMessage
+														name="price"
+														errors={errors}
+														render={({ message }) => {
+															return <p style={{ color: "#f03e3e" }}>{message}</p>;
+														}}
+													/>
+												</>
+											)}
 										/>
-									</>
-								)}
-							/>
-						</Form.Item>
-						<Form.Item label="Giảm giá">
-							<Controller
-								name="discount"
-								defaultValue={0}
-								control={control}
-								render={({ field, formState: { errors } }) => (
-									<>
-										<Input
-											size="large"
-											{...field}
-											status={errors.discount && "error"}
-											placeholder="18.990.000"
-											style={{
-												border: "none",
-												padding: 10,
-											}}
-										/>
-										<ErrorMessage
+									</Form.Item>
+								</Col>
+								<Col span={12}>
+									<Form.Item label="Giảm giá">
+										<Controller
 											name="discount"
-											errors={errors}
-											render={({ message }) => {
-												return <p style={{ color: "#f03e3e" }}>{message}</p>;
+											defaultValue={0}
+											control={control}
+											render={({ field, formState: { errors } }) => (
+												<>
+													<Input
+														size="large"
+														{...field}
+														status={errors.discount && "error"}
+														placeholder="18.990.000"
+														className={cx("input")}
+													/>
+													<ErrorMessage
+														name="discount"
+														errors={errors}
+														render={({ message }) => {
+															return <p style={{ color: "#f03e3e" }}>{message}</p>;
+														}}
+													/>
+												</>
+											)}
+										/>
+									</Form.Item>
+								</Col>
+								<Col span={12}>
+									<Form.Item label="Thương hiệu">
+										<Controller
+											name="brandId"
+											control={control}
+											render={({ field, formState: { errors } }) => {
+												const treeData = brands.map((brand) => {
+													return {
+														title: brand?.name,
+														value: brand?._id,
+														children: brand?.children?.map((item) => ({
+															title: item?.name,
+															value: item._id,
+														})),
+													};
+												});
+												return (
+													<>
+														<TreeSelect
+															style={{ width: "100%" }}
+															size="large"
+															dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+															treeData={treeData}
+															placeholder="Thương hiệu"
+															treeDefaultExpandAll
+															status={errors.brandId && "error"}
+															{...field}
+															value={field?.value || "-- Thương hiệu --"}
+															className={cx("select")}
+															suffixIcon={<IoIosArrowDown size={16} />}
+														/>
+														<ErrorMessage
+															name="brandId"
+															errors={errors}
+															render={({ message }) => {
+																return <p style={{ color: "#f03e3e" }}>{message}</p>;
+															}}
+														/>
+													</>
+												);
 											}}
 										/>
-									</>
-								)}
-							/>
-						</Form.Item>
-						<Form.Item label="Danh mục">
-							<Controller
-								name="categoryId"
-								control={control}
-								render={({ field, formState: { errors } }) => (
-									<>
-										<Select
-											{...field}
-											size="large"
-											style={{ width: "100%" }}
-											defaultActiveFirstOption={true}
-											status={errors.categoryId && "error"}
-											placeholder="Laptop, ..."
-										>
-											{categories.map((category: ICategory) => (
-												<Option key={category._id}>{category.name}</Option>
-											))}
-										</Select>
-										<ErrorMessage
+									</Form.Item>
+								</Col>
+								<Col span={12}>
+									<Form.Item label="Danh mục">
+										<Controller
 											name="categoryId"
-											errors={errors}
-											render={({ message }) => {
-												return <p style={{ color: "#f03e3e" }}>{message}</p>;
+											defaultValue={categories[0]?._id as string}
+											control={control}
+											render={({ field, formState: { errors } }) => (
+												<>
+													<Select
+														size="large"
+														{...field}
+														style={{ width: "100%" }}
+														value={field?.value || "-- Danh mục --"}
+														status={errors.categoryId && "error"}
+														className={cx("select")}
+														suffixIcon={<IoIosArrowDown size={16} />}
+													>
+														{categories.map((category: ICategory) => (
+															<Option key={category._id}>{category.name}</Option>
+														))}
+													</Select>
+													<ErrorMessage
+														name="categoryId"
+														errors={errors}
+														render={({ message }) => {
+															return <p style={{ color: "#f03e3e" }}>{message}</p>;
+														}}
+													/>
+												</>
+											)}
+										/>
+									</Form.Item>
+								</Col>
+								<Col span={24}>
+									<Form.Item label="Tồn kho">
+										<Controller
+											name="stock"
+											control={control}
+											render={({ field, formState: { errors } }) => (
+												<>
+													<Input
+														size="large"
+														{...field}
+														status={errors.stock && "error"}
+														placeholder="999"
+														className={cx("input")}
+													/>
+													<ErrorMessage
+														name="stock"
+														errors={errors}
+														render={({ message }) => {
+															return <p style={{ color: "#f03e3e" }}>{message}</p>;
+														}}
+													/>
+												</>
+											)}
+										/>
+									</Form.Item>
+								</Col>
+								<Col span={24}>
+									<Form.Item label="Trạng thái">
+										<Controller
+											control={control}
+											name="status"
+											render={({ field, formState: { errors } }) => {
+												return (
+													<>
+														<Radio.Group
+															{...field}
+															defaultValue={getValues("status")}
+															style={{
+																display: "flex",
+																flexDirection: "column",
+																gap: 16,
+															}}
+														>
+															<Radio value={0}>
+																<p>Bán</p>
+															</Radio>
+															<Radio value={1}>
+																<p>Ngừng bán</p>
+															</Radio>
+														</Radio.Group>
+														<ErrorMessage
+															name="status"
+															errors={errors}
+															render={({ message }) => {
+																return (
+																	<p style={{ color: "#f03e3e", marginTop: 4 }}>
+																		{message}
+																	</p>
+																);
+															}}
+														/>
+													</>
+												);
 											}}
 										/>
-									</>
-								)}
-							/>
-						</Form.Item>
-						<Form.Item label="Thương hiệu">
-							<Controller
-								name="brandId"
-								control={control}
-								render={({ field, formState: { errors } }) => {
-									const treeData = brands.map((brand) => {
-										return {
-											title: brand?.name,
-											value: brand?._id,
-											children: brand?.children?.map((item) => ({
-												title: item?.name,
-												value: item._id,
-											})),
-										};
-									});
-									return (
-										<>
-											<TreeSelect
-												style={{ width: "100%" }}
-												size="large"
-												dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-												treeData={treeData}
-												defaultValue={getValues("brandId")}
-												placeholder="Dell, ..."
-												treeDefaultExpandAll
-												status={errors.brandId && "error"}
-												{...field}
-											/>
-											<ErrorMessage
-												name="brandId"
-												errors={errors}
-												render={({ message }) => {
-													return <p style={{ color: "#f03e3e" }}>{message}</p>;
-												}}
-											/>
-										</>
-									);
-								}}
-							/>
-						</Form.Item>
-						<Form.Item label="Upload">
-							<List
-								grid={{ gutter: 8, column: 4 }}
-								dataSource={images}
-								renderItem={(img: IImage) => (
-									<List.Item>
-										<Button
-											shape="circle"
-											size="small"
-											icon={
-												<TiDeleteOutline
-													size={20}
-													color="#f03e3e"
-												/>
-											}
-											style={{
-												display: "flex",
-												alignItems: "center",
-												justifyContent: "center",
-												border: "none",
-												backgroundColor: "#f03e3e1a",
-												position: "absolute",
-												zIndex: 1,
-												right: -8,
-												top: -12,
+									</Form.Item>
+								</Col>
+								<Col span={24}>
+									<Form.Item
+										label="Bài viết mô tả"
+										style={{
+											width: "100%",
+										}}
+									>
+										<Controller
+											name="description"
+											control={control}
+											render={({ field, formState: { errors } }) => {
+												return (
+													<div className={cx("editor")}>
+														{editor && <MenuBar editor={editor} />}
+														<EditorContent
+															className={cx("editor__content")}
+															editor={editor}
+															{...field}
+														/>
+														<ErrorMessage
+															name="description"
+															errors={errors}
+															render={({ message }) => {
+																return <p style={{ color: "#f03e3e" }}>{message}</p>;
+															}}
+														/>
+													</div>
+												);
 											}}
-											onClick={() => handleRemoveFile(img)}
 										/>
-										<Image
-											src={img.path}
-											style={{
-												borderRadius: 6,
-											}}
-											preview={false}
-										/>
-									</List.Item>
-								)}
-							/>
-							<Upload
-								listType="picture-card"
-								fileList={files}
-								onPreview={handlePreview}
-								onChange={handleChange}
-								beforeUpload={() => {
-									return false;
-								}}
-								multiple
-							>
-								<div>
-									<IoAddOutline />
-									<div style={{ marginTop: 8 }}>Upload</div>
-								</div>
-							</Upload>
-						</Form.Item>
+									</Form.Item>
+								</Col>
+							</Row>
+						</div>
+					</Col>
 
-						<Modal
-							open={previewOpen}
-							title={previewTitle}
-							footer={null}
-							onCancel={handleCancel}
-						>
-							<img
-								alt="example"
-								style={{ width: "100%" }}
-								src={previewImage}
-							/>
-						</Modal>
+					<Col span="10">
+						<div className={cx("form__right")}>
+							<h1>Thuộc tính | Media</h1>
+							<Row gutter={[16, 16]}>
+								<Col span={24}>
+									{getValues("attributes")?.length > 0 && (
+										<Form.List
+											name="attributes"
+											initialValue={getValues("attributes")}
+										>
+											{(fields, { add, remove }) => (
+												<>
+													{fields.map(({ key, name, fieldKey, ...restField }, index) => (
+														<Row
+															key={index}
+															gutter={[16, 16]}
+															style={{ marginTop: 16 }}
+														>
+															<Col span={11}>
+																<Controller
+																	control={control}
+																	name={`attributes[${index}].k`}
+																	render={({ field }) => (
+																		<Input
+																			{...field}
+																			placeholder="Thuộc tính"
+																			className={cx("input")}
+																		/>
+																	)}
+																/>
+															</Col>
+															<Col span={11}>
+																<Controller
+																	control={control}
+																	name={`attributes[${index}].v`}
+																	render={({ field }) => (
+																		<Input
+																			{...field}
+																			placeholder="Giá trị"
+																			className={cx("input")}
+																		/>
+																	)}
+																/>
+															</Col>
+															<Col
+																span={2}
+																style={{ display: "flex", alignItems: "center" }}
+															>
+																<IoClose
+																	size={16}
+																	onClick={() => {
+																		remove(index);
+																		setValue(
+																			"attributes",
+																			getValues("attributes").filter(
+																				(item: any, i: any) => i != index
+																			)
+																		);
+																	}}
+																/>
+															</Col>
+														</Row>
+													))}
+													<Form.Item>
+														<Button
+															type="default"
+															onClick={() => add()}
+															block
+															icon={<IoAddSharp size={16} />}
+															style={{
+																color: "rgb(34, 139, 230)",
+																backgroundColor: "rgba(34, 139, 230, 0.1)",
+																height: 48,
+																display: "flex",
+																alignItems: "center",
+																justifyContent: "center",
+																marginTop: 16,
+															}}
+															className={cx("btn")}
+														>
+															Thêm thuộc tính
+														</Button>
+													</Form.Item>
+												</>
+											)}
+										</Form.List>
+									)}
+								</Col>
+								<Col span={24}>
+									<Form.Item label="Thư viện ảnh">
+										<List
+											grid={{ gutter: 8, column: 4 }}
+											dataSource={images}
+											renderItem={(img: IImage) => (
+												<List.Item>
+													<Button
+														shape="circle"
+														size="small"
+														icon={
+															<TiDeleteOutline
+																size={20}
+																color="#f03e3e"
+															/>
+														}
+														style={{
+															display: "flex",
+															alignItems: "center",
+															justifyContent: "center",
+															border: "none",
+															backgroundColor: "#f03e3e1a",
+															position: "absolute",
+															zIndex: 1,
+															right: -8,
+															top: -12,
+														}}
+														onClick={() => handleRemoveFile(img)}
+													/>
+													<Image
+														src={img.path}
+														style={{
+															borderRadius: 6,
+														}}
+														preview={false}
+													/>
+												</List.Item>
+											)}
+										/>
+										<Upload
+											listType="picture-card"
+											fileList={files}
+											onPreview={handlePreview}
+											onChange={handleChange}
+											beforeUpload={() => {
+												return false;
+											}}
+											multiple
+										>
+											<div>
+												<IoAddOutline />
+												<div style={{ marginTop: 8 }}>Upload</div>
+											</div>
+										</Upload>
+									</Form.Item>
+								</Col>
+							</Row>
+							<Modal
+								open={previewOpen}
+								title={previewTitle}
+								footer={null}
+								onCancel={handleCancel}
+							>
+								<img
+									alt="example"
+									style={{ width: "100%" }}
+									src={previewImage}
+								/>
+							</Modal>
+						</div>
+					</Col>
+				</Row>
+				<Row
+					gutter={[48, 48]}
+					style={{
+						marginTop: 32,
+					}}
+				>
+					<Col span={14}>
 						<Form.Item>
 							<Button
 								style={{
 									color: "#228be6",
 									backgroundColor: "#228be61a",
 									border: "none",
+									height: 48,
+									fontSize: 14,
+									padding: "0 16px",
 								}}
 								htmlType="submit"
 								size="middle"
+								className={cx("btn")}
+								loading={loading}
 							>
 								Cập Nhật
 							</Button>
 						</Form.Item>
 					</Col>
-
-					<Col span="16">
-						<Form.Item
-							label="Bài viết mô tả"
-							style={{
-								width: "100%",
-							}}
-						>
-							<Controller
-								name="description"
-								control={control}
-								render={({ field: { onChange, name, value, ref, onBlur } }) => {
-									return <Input />;
+					<Col span={10}>
+						<Form.Item style={{ float: "right" }}>
+							<Button
+								style={{
+									color: "rgb(253, 57, 122)",
+									backgroundColor: "rgba(253, 57, 122, 0.1)",
+									border: "none",
+									height: 48,
+									fontSize: 14,
+									padding: "0 16px",
 								}}
-							/>
+								size="middle"
+								className={cx("btn")}
+							>
+								Hủy
+							</Button>
 						</Form.Item>
 					</Col>
 				</Row>
