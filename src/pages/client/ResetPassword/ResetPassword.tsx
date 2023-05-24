@@ -53,7 +53,7 @@ const Register = (props: Props) => {
 			await apiResetPassword({
 				token,
 				userId,
-				password: data.password,
+				password: data.password as string,
 			});
 			setLoading(false);
 			Swal.fire("Thành công", "Reset mật khẩu thành công", "success").then(() => navigate("/dang-nhap"));
