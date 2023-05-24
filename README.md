@@ -1,1 +1,1 @@
-# Hoàn Thành Dự Án `Thinkpro` (Cá Nhân)
+# Hoàn Thành Dự Án `Thinkpro`
