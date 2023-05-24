@@ -34,6 +34,9 @@ import {
 	UpdateProductPage,
 } from "~/pages/admin/Products";
 import { CategoriesManagerPage } from "~/pages/admin/Categories";
+import { BrandsManagerPage } from "~/pages/admin/Brands";
+import { OrdersManagerPage } from "~/pages/admin/Orders";
+import { OrderDetailsPage } from "~/pages/admin/Orders";
 
 const routes: RouteObject[] = [
 	{
@@ -159,6 +162,18 @@ const routes: RouteObject[] = [
 			{
 				path: "categories",
 				element: <CategoriesManagerPage />,
+			},
+			{
+				path: "brands",
+				element: <BrandsManagerPage />,
+			},
+			{
+				path: "orders",
+				element: <OrdersManagerPage />,
+			},
+			{
+				path: "orders/:id",
+				element: <OrderDetailsPage />,
 			},
 		],
 	},

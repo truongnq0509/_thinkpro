@@ -10,6 +10,11 @@ export const getProduct = async (slug: string) => {
 	return response?.data;
 };
 
+export const getDashboard = async () => {
+	const response = await httpRequest.get(`/products/dashboard`);
+	return response?.data;
+};
+
 export const getProducts = async (
 	_limit: number = 10,
 	_order: string = "desc",

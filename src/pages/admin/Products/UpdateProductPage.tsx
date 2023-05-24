@@ -1,10 +1,19 @@
 import { ErrorMessage } from "@hookform/error-message";
+import Highlight from "@tiptap/extension-highlight";
+import ImageTiptap from "@tiptap/extension-image";
+import TaskItem from "@tiptap/extension-task-item";
+import TaskList from "@tiptap/extension-task-list";
+import { EditorContent, useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
 import {
 	Button,
 	Col,
 	Form,
+	Image,
 	Input,
+	List,
 	Modal,
+	Radio,
 	Row,
 	Select,
 	Space,
@@ -12,38 +21,28 @@ import {
 	TreeSelect,
 	Upload,
 	message,
-	Image,
-	List,
-	Radio,
 } from "antd";
 import type { RcFile, UploadProps } from "antd/es/upload";
 import type { UploadFile } from "antd/es/upload/interface";
 import classNames from "classnames/bind";
 import moment from "moment/moment";
 import { useEffect, useState } from "react";
-import { Controller, set, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { BsPatchCheck } from "react-icons/bs";
-import { IoAddOutline } from "react-icons/io5";
-import { Link, useNavigate, useOutletContext, useParams } from "react-router-dom";
+import { IoIosArrowDown } from "react-icons/io";
+import { IoAddOutline, IoAddSharp, IoClose } from "react-icons/io5";
 import { TiDeleteOutline } from "react-icons/ti";
+import { Link, useNavigate, useOutletContext, useParams } from "react-router-dom";
 import slugify from "react-slugify";
+import MenuBar from "~/components/MenuBar/MenuBar";
 import { IBrand, ICategory, IProduct } from "~/interfaces";
 import { getBrands as apiGetBrands } from "~/services/brandService";
 import { getCategories as apiGetCategories } from "~/services/categoryService";
 import { getProduct as apiGetProduct, getStock as apiGetStock } from "~/services/productService";
 import { removeFile as apiRemoveFile } from "~/services/uploadService";
 import productSchema from "~/validations/products";
-import styles from "./Products.module.scss";
-import { IoIosArrowDown } from "react-icons/io";
-import Highlight from "@tiptap/extension-highlight";
-import TaskItem from "@tiptap/extension-task-item";
-import TaskList from "@tiptap/extension-task-list";
-import { EditorContent, useEditor } from "@tiptap/react";
-import ImageTiptap from "@tiptap/extension-image";
-import StarterKit from "@tiptap/starter-kit";
-import MenuBar from "~/components/MenuBar/MenuBar";
 import "./Products.module.scss";
-import { IoClose, IoAddSharp } from "react-icons/io5";
+import styles from "./Products.module.scss";
 
 const { Option } = Select;
 

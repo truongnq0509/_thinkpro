@@ -4,7 +4,7 @@ import { IQuery } from "~/interfaces/query";
 import { getCategories as apiGetCategories, getCategory as apiGetCategory } from "~/services/categoryService";
 
 export const getCategories = createAsyncThunk("category/getAll", async (_, thunkApi) => {
-	const response = await apiGetCategories();
+	const response = await apiGetCategories(100, "asc", "createdAt", 1);
 	return response?.data;
 });
 

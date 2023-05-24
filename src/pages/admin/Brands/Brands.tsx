@@ -1,5 +1,5 @@
 import { ErrorMessage } from "@hookform/error-message";
-import { Button, Col, Form, Input, Modal, Row, Space, Tag, Upload, message } from "antd";
+import { Button, Col, Form, Input, Modal, Row, Select, Space, Tag, TreeSelect, Upload, message } from "antd";
 import Table, { ColumnsType } from "antd/es/table";
 import classNames from "classnames/bind";
 import joi from "joi";
@@ -8,24 +8,28 @@ import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { AiFillInfoCircle } from "react-icons/ai";
 import { BsPatchCheck } from "react-icons/bs";
+import { IoIosArrowDown } from "react-icons/io";
 import { Link } from "react-router-dom";
 import slugify from "react-slugify";
-import { ICategory } from "~/interfaces";
-import {
-	createCategory as apiCreateCategories,
-	getCategories as apiGetCategories,
-	removeCategory as apiRemoveCategory,
-	updateCategory as apiUpdateCategory,
-} from "~/services/categoryService";
-import { uploadFiles as apiUploadFiles } from "~/services/uploadService";
-import styles from "./Categories.module.scss";
 import { useTitle } from "~/hooks";
+import { IBrand, ICategory } from "~/interfaces";
+import {
+	createBrand as apiCreateBrand,
+	getBrands as apiGetBrands,
+	getParentBrands as apiGetParentBrands,
+	removeBrand as apiRemoveBrand,
+	updateBrand as apiUpdateBrand,
+} from "~/services/brandService";
+import { getCategories as apiGetCategories } from "~/services/categoryService";
+import { uploadFiles as apiUploadFiles } from "~/services/uploadService";
+import styles from "./Brands.module.scss";
 
 type Props = {};
 const cx = classNames.bind(styles);
 
 const { TextArea } = Input;
 const { confirm } = Modal;
+const { Option } = Select;
 
 const categorySchema = joi.object({
 	name: joi.string().required().trim().messages({
@@ -36,6 +40,11 @@ const categorySchema = joi.object({
 		"string.empty": "Không được để trống!!!",
 		"any.required": "Trường này bắt buộc phải nhập!!!",
 	}),
+	parentId: joi.any().required().messages({
+		"string.empty": "Không được để trống!!!",
+		"any.required": "Trường này bắt buộc phải nhập!!!",
+	}),
+	categoryIds: joi.array().optional().allow({}),
 	image: joi.object().optional().allow({}),
 	description: joi.string().required().trim().messages({
 		"string.empty": "Không được để trống!!!",
@@ -45,26 +54,30 @@ const categorySchema = joi.object({
 	updatedAt: joi.string().optional().allow(new Date()),
 });
 
-const Categories = (props: Props) => {
+const Brands = (props: Props) => {
 	const [image, setImage] = useState<string>("");
 	const [loading, setLoading] = useState<any>({
 		image: false,
 		form: false,
 		table: false,
 	});
+	const [brands, setBrands] = useState<IBrand[]>([]);
 	const [categories, setCategories] = useState<ICategory[]>([]);
+	const [parentBrands, setParentBrands] = useState<IBrand[]>([]);
 	const [paginate, setPaginate] = useState<any>({});
 	const [isEdit, setIsEdit] = useState<boolean>(false);
 	const [id, setId] = useState<string>("");
 
-	useTitle("Thinkpro | Tất cả danh mục");
+	useTitle("Thinkpro | Tất cả thương hiệu");
 
-	const { control, handleSubmit, setValue, reset } = useForm<any>({
+	const { control, handleSubmit, setValue, getValues, reset } = useForm<any>({
 		defaultValues: {
 			name: "",
 			slug: "",
 			image: "",
 			description: "",
+			parentId: null,
+			categoryIds: [],
 			createdAt: `${moment().format()}`,
 			updatedAt: `${moment().format()}`,
 		},
@@ -91,7 +104,7 @@ const Categories = (props: Props) => {
 
 	const fetchApi = async (
 		_limit: number = 8,
-		_order: string = "asc",
+		_order: string = "desc",
 		_sort: string = "createdAt",
 		_page: number = 1
 	) => {
@@ -99,8 +112,8 @@ const Categories = (props: Props) => {
 			...loading,
 			table: true,
 		});
-		const { data, paginate } = await apiGetCategories(_limit, _order, _sort, _page);
-		setCategories(data);
+		const { data, paginate } = await apiGetBrands(_limit, _order, _sort, _page);
+		setBrands(data);
 		setPaginate(paginate);
 		setLoading({
 			...loading,
@@ -109,10 +122,17 @@ const Categories = (props: Props) => {
 	};
 
 	useEffect(() => {
+		const callApi = async () => {
+			const [res1, res2] = await Promise.all([apiGetCategories(100), apiGetParentBrands()]);
+			setCategories(res1?.data);
+			setParentBrands(res2?.data);
+		};
+
 		fetchApi();
+		callApi();
 	}, []);
 
-	const showDeleteConfirm = (id: string) => {
+	const showDeleteConfirm = (_id: string) => {
 		confirm({
 			title: "Bạn có muốn xóa không?",
 			icon: (
@@ -127,30 +147,33 @@ const Categories = (props: Props) => {
 			cancelText: "No",
 			style: {},
 			async onOk() {
-				await apiRemoveCategory(id);
-				setCategories((prev) => prev.filter((item) => item?._id != id));
+				await apiRemoveBrand(_id);
+				setBrands((prev) => prev.filter((item) => item?._id != _id));
 			},
 		});
 	};
 
-	const setCategoryEdit = (category: ICategory) => {
+	const setBrandEdit = (brand: IBrand) => {
+		console.log(brand);
 		// react-hook-form
-		setValue("name", category?.name);
-		setValue("slug", category?.slug);
-		setValue("image", category?.image);
-		setValue("description", category?.description);
-		setValue("createdAt", category?.createdAt);
+		setValue("name", brand?.name);
+		setValue("slug", brand?.slug);
+		setValue("image", brand?.image);
+		setValue("description", brand?.description);
+		setValue("createdAt", brand?.createdAt);
+		setValue("parentId", brand?.parentId);
+		setValue("categoryIds", brand?.categoryIds);
 		setValue("updatedAt", `${moment().format()}`);
 
 		// preview image
-		setImage(category?.image?.path as any);
+		setImage(brand?.image?.path as any);
 		// is edit
-		setIsEdit(!isEdit);
+		setIsEdit(true);
 		// set id
-		setId(category?._id as any);
+		setId(brand?._id as any);
 	};
 
-	const columns: ColumnsType<ICategory> = [
+	const columns: ColumnsType<IBrand> = [
 		{
 			title: "#",
 			dataIndex: "index",
@@ -158,7 +181,7 @@ const Categories = (props: Props) => {
 			render: (text: any, record: any, index: any) => index + 1,
 		},
 		{
-			title: "Tiêu đề",
+			title: "Thương hiệu",
 			dataIndex: "name",
 			key: "name",
 		},
@@ -181,7 +204,7 @@ const Categories = (props: Props) => {
 		{
 			title: "Action",
 			key: "action",
-			render: (_: any, category: any) => (
+			render: (_: any, brand: any) => (
 				<Space size="middle">
 					<Button
 						style={{
@@ -190,7 +213,7 @@ const Categories = (props: Props) => {
 							border: "none",
 						}}
 						className={cx("btn")}
-						onClick={() => showDeleteConfirm(category._id as string)}
+						onClick={() => showDeleteConfirm(brand._id as string)}
 					>
 						Xóa
 					</Button>
@@ -201,7 +224,7 @@ const Categories = (props: Props) => {
 							border: "none",
 						}}
 						className={cx("btn")}
-						onClick={() => setCategoryEdit(category)}
+						onClick={() => setBrandEdit(brand)}
 					>
 						Cập Nhật
 					</Button>
@@ -233,12 +256,12 @@ const Categories = (props: Props) => {
 		});
 
 		if (!isEdit) {
-			const { data: response } = await apiCreateCategories(data);
+			const { data: response } = await apiCreateBrand(data);
 			setLoading({
 				...loading,
 				form: false,
 			});
-			setCategories((prev) => [response, ...prev]);
+			setBrands((prev) => [response, ...prev]);
 			// reset form
 			reset();
 			setImage("");
@@ -249,15 +272,15 @@ const Categories = (props: Props) => {
 				duration: 1,
 			});
 		} else {
-			await apiUpdateCategory(id, data);
+			await apiUpdateBrand(id, data);
 			setLoading({
 				...loading,
 				form: false,
 			});
-			const newCategories: ICategory[] = categories.map((category: ICategory) => {
+			const newCategories: ICategory[] = brands.map((category: ICategory) => {
 				return category._id === id ? data : category;
 			});
-			setCategories(newCategories);
+			setBrands(newCategories);
 			// reset form
 			reset();
 			setImage("");
@@ -282,7 +305,7 @@ const Categories = (props: Props) => {
 						}}
 					>
 						<Space align="end">
-							<h2 className={cx("title")}>Tất Cả Danh Mục</h2>
+							<h2 className={cx("title")}>Tất Cả Thương Hiệu</h2>
 						</Space>
 					</Col>
 				</Row>
@@ -292,7 +315,7 @@ const Categories = (props: Props) => {
 				>
 					<Col span={6}>
 						<div className={cx("wrapper__left")}>
-							<h1>Tạo danh mục</h1>
+							<h1>Tạo thương hiệu</h1>
 							<Form
 								layout="vertical"
 								autoComplete="off"
@@ -304,7 +327,7 @@ const Categories = (props: Props) => {
 							>
 								<Row gutter={[16, 16]}>
 									<Col span={24}>
-										<Form.Item label="Tiêu đề">
+										<Form.Item label="Thương hiệu">
 											<Controller
 												name="name"
 												control={control}
@@ -324,7 +347,7 @@ const Categories = (props: Props) => {
 																onChange(e);
 															}}
 															status={errors.name && "error"}
-															placeholder="laptop"
+															placeholder="dell"
 															className={cx("input")}
 														/>
 														<ErrorMessage
@@ -408,6 +431,81 @@ const Categories = (props: Props) => {
 										</Form.Item>
 									</Col>
 									<Col span={24}>
+										<Form.Item label="Danh mục">
+											<Controller
+												name="categoryIds"
+												control={control}
+												render={({ field, formState: { errors } }) => {
+													const treeData = categories.map((category: any) => {
+														return {
+															title: category?.name,
+															value: category?._id,
+														};
+													});
+													return (
+														<>
+															<TreeSelect
+																style={{ width: "100%" }}
+																size="large"
+																dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+																treeData={treeData}
+																placeholder="-- Danh mục --"
+																treeDefaultExpandAll
+																status={errors.categoryIds && "error"}
+																{...field}
+																multiple
+																value={field?.value || "-- Danh mục --"}
+																className={cx("select")}
+																suffixIcon={<IoIosArrowDown size={16} />}
+															/>
+															<ErrorMessage
+																name="categoryIds"
+																errors={errors}
+																render={({ message }) => {
+																	return (
+																		<p style={{ color: "#f03e3e" }}>{message}</p>
+																	);
+																}}
+															/>
+														</>
+													);
+												}}
+											/>
+										</Form.Item>
+									</Col>
+									<Col span={24}>
+										<Form.Item label="Thương hiệu cha">
+											<Controller
+												name="parentId"
+												control={control}
+												render={({ field, formState: { errors } }) => (
+													<>
+														<Select
+															size="large"
+															{...field}
+															style={{ width: "100%" }}
+															value={field?.value || "-- Thương hiệu cha --"}
+															status={errors.parentId && "error"}
+															className={cx("select")}
+															suffixIcon={<IoIosArrowDown size={16} />}
+														>
+															{parentBrands?.map((brand: any) => (
+																<Option key={brand._id}>{brand.name}</Option>
+															))}
+														</Select>
+														<ErrorMessage
+															name="parentId"
+															errors={errors}
+															render={({ message }) => {
+																return <p style={{ color: "#f03e3e" }}>{message}</p>;
+															}}
+														/>
+													</>
+												)}
+											/>
+										</Form.Item>
+									</Col>
+									<Col span={24}>
 										<Form.Item label="Mô tả">
 											<Controller
 												control={control}
@@ -469,14 +567,16 @@ const Categories = (props: Props) => {
 							<Table
 								loading={loading?.table}
 								columns={columns}
-								dataSource={categories as any}
+								dataSource={brands as any}
 								pagination={{
 									current: paginate?.page,
+									defaultPageSize: paginate?.limit,
 									pageSize: paginate?.limit,
 									total: paginate?.totalDocs,
 									hideOnSinglePage: true,
+									showSizeChanger: false,
 									onChange: async (page) => {
-										fetchApi(8, "asc", "createdAt", page);
+										fetchApi(8, "desc", "createdAt", page);
 									},
 								}}
 								rowKey={"slug"}
@@ -492,4 +592,4 @@ const Categories = (props: Props) => {
 	);
 };
 
-export default Categories;
+export default Brands;

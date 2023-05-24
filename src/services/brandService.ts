@@ -9,8 +9,18 @@ export const getBrand = async (query: IQuery) => {
 	return response?.data;
 };
 
-export const getBrands = async () => {
-	const response = await httpRequest.get("/brands");
+export const getBrands = async (
+	_limit: number = 10,
+	_order: string = "desc",
+	_sort: string = "createdAt",
+	_page: number = 1
+) => {
+	const response = await httpRequest.get(`/brands?_page=${_page}&_limit=${_limit}&_order=${_order}&_sort=${_sort}`);
+	return response?.data;
+};
+
+export const getParentBrands = async () => {
+	const response = await httpRequest.get("/brands/parent");
 	return response?.data;
 };
 

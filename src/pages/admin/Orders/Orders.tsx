@@ -1,45 +1,42 @@
-import { Button, Card, Col, List, Row, Space, Statistic } from "antd";
-import Table, { ColumnsType } from "antd/es/table";
+import { Button, Col, Modal, Row, Space, Table } from "antd";
+import type { ColumnsType } from "antd/es/table";
 import classNames from "classnames/bind";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
-import CountUp from "react-countup";
-import { AiOutlineSketch } from "react-icons/ai";
-import { BiCategoryAlt } from "react-icons/bi";
-import { BsCart2, BsShop } from "react-icons/bs";
-import { FaMoneyBillAlt } from "react-icons/fa";
+import { AiFillInfoCircle } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { useTitle } from "~/hooks";
+import { IProduct } from "~/interfaces";
 import { getAllOrder as apiGetAllOrder } from "~/services/orderService";
-import { getDashboard as apiGetDashboard } from "~/services/productService";
 import { formatNumber } from "~/utils/fc";
-import styles from "./Dashboard.module.scss";
+import styles from "./Orders.module.scss";
+
+const { confirm } = Modal;
 
 type Props = {};
 const cx = classNames.bind(styles);
 
-interface IDashboard {
-	title: string;
-	statistic: number;
-	icon: React.ReactNode;
-	color: string;
-}
-
-const Dashboard = (props: Props) => {
+const OrdersPage: React.FC = (props: Props) => {
+	const [paginate, setPaginate] = useState<any>(null);
 	const [orders, setOrders] = useState<any>([]);
-	const [dashboard, setDashboard] = useState<any>(null);
 	const [loading, setLoading] = useState<boolean>(false);
 
 	useTitle("Thinkpro | Tất cả đơn hàng");
 
+	const fetchApi = async (
+		_limit: number = 10,
+		_order: string = "desc",
+		_sort: string = "createdAt",
+		_page: number = 1
+	) => {
+		setLoading(true);
+		const { data, paginate } = await apiGetAllOrder();
+		setOrders(data);
+		setPaginate(paginate);
+		setLoading(false);
+	};
+
 	useEffect(() => {
-		const fetchApi = async () => {
-			setLoading(true);
-			const [res1, res2] = await Promise.all([apiGetAllOrder(), apiGetDashboard()]);
-			setOrders(res1?.data);
-			setDashboard(res2?.data);
-			setLoading(false);
-		};
 		fetchApi();
 	}, []);
 
@@ -76,6 +73,26 @@ const Dashboard = (props: Props) => {
 					background: "#0abb871a",
 				};
 		}
+	};
+
+	const showDeleteConfirm = (id: string) => {
+		confirm({
+			title: "Bạn có muốn xóa không?",
+			icon: (
+				<AiFillInfoCircle
+					size="32px"
+					color="#ffec99"
+				/>
+			),
+			content: "Hành động này không ảnh hưởng đến ...",
+			okText: "Yes",
+			okType: "danger",
+			cancelText: "No",
+			style: {},
+			onOk() {
+				// handleRemoveProduct(id);
+			},
+		});
 	};
 
 	const columns: ColumnsType<any> = [
@@ -158,67 +175,8 @@ const Dashboard = (props: Props) => {
 		},
 	];
 
-	const data: IDashboard[] = [
-		{
-			title: "Đơn Hàng",
-			statistic: dashboard?.orders,
-			icon: <BsCart2 size={20} />,
-			color: "#ffa8a8",
-		},
-		{
-			title: "Doanh Thu",
-			statistic: dashboard?.money,
-			icon: <FaMoneyBillAlt size={20} />,
-			color: "#ffa8a8",
-		},
-		{
-			title: "Sản Phẩm",
-			statistic: dashboard?.products,
-			icon: <AiOutlineSketch size={20} />,
-			color: "#ffa8a8",
-		},
-		{
-			title: "Danh Mục",
-			statistic: dashboard?.categories,
-			icon: <BiCategoryAlt size={20} />,
-			color: "#ffa8a8",
-		},
-		{
-			title: "Thương Hiệu",
-			statistic: dashboard?.brands,
-			icon: <BsShop size={20} />,
-			color: "#ffa8a8",
-		},
-	];
-
 	return (
 		<div className={cx("wrapper")}>
-			<List
-				grid={{ gutter: 16, column: 5 }}
-				dataSource={data}
-				renderItem={(item) => (
-					<List.Item>
-						<Card bordered={false}>
-							<Statistic
-								title={item.title}
-								value={item.statistic}
-								precision={2}
-								valueStyle={{ color: item.color }}
-								prefix={item.icon}
-								formatter={() => (
-									<CountUp
-										end={item.statistic}
-										separator="."
-									/>
-								)}
-							/>
-						</Card>
-					</List.Item>
-				)}
-				style={{
-					margin: "16px 0",
-				}}
-			/>
 			<Row gutter={[0, 0]}>
 				<Col
 					span="12"
@@ -228,15 +186,22 @@ const Dashboard = (props: Props) => {
 					}}
 				>
 					<Space align="end">
-						<h2 className={cx("title")}>Đơn hàng mới nhất</h2>
+						<h2 className={cx("title")}>Tất Cả Đơn Hàng</h2>
 					</Space>
 				</Col>
 			</Row>
 			<Table
 				loading={loading}
 				columns={columns}
-				dataSource={orders as any}
-				pagination={false}
+				dataSource={orders as any[]}
+				pagination={{
+					pageSize: paginate?.limit,
+					total: paginate?.totalDocs,
+					showSizeChanger: false,
+					onChange: async (page) => {
+						await fetchApi(page);
+					},
+				}}
 				rowKey={"_id"}
 				style={{
 					marginTop: "16px",
@@ -246,4 +211,4 @@ const Dashboard = (props: Props) => {
 	);
 };
 
-export default Dashboard;
+export default OrdersPage;

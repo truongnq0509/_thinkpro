@@ -5,6 +5,16 @@ export const getOrder = async (id: string) => {
 	return response?.data;
 };
 
+export const getAllOrder = async (
+	_limit: number = 10,
+	_order: string = "desc",
+	_sort: string = "createdAt",
+	_page: number = 1
+) => {
+	const response = await httpRequest.get(`/order?_page=${_page}&_limit=${_limit}&_order=${_order}&_sort=${_sort}`);
+	return response?.data;
+};
+
 export const getOrderByUser = async () => {
 	const response = await httpRequest.get("/order/me");
 	return response?.data;
@@ -17,6 +27,11 @@ export const createOrder = async (data: any) => {
 
 export const cancelOrder = async (data: any, id: string) => {
 	const response = await httpRequest.remove("/order/" + id, data);
+	return response?.data;
+};
+
+export const changerOrderStatus = async (data: any, id: string) => {
+	const response = await httpRequest.patch("/order/" + id, data);
 	return response?.data;
 };
 

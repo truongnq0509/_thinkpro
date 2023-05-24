@@ -6,6 +6,8 @@ export interface IBrand {
 		path: string;
 		filename: string;
 	};
+	parentId?: string;
+	categoryIds?: [];
 	children?: IBrand[];
 	description?: string;
 	createdAt?: string;

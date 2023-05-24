@@ -18,7 +18,7 @@ type Props = {};
 const cx = classNames.bind(styles);
 
 const Products: React.FC = (props: Props) => {
-	const [{ products, count, handleRemoveProduct, paginate, emitData }] = useOutletContext<any>();
+	const [{ products, count, handleRemoveProduct, paginate, emitData, loading }] = useOutletContext<any>();
 
 	const showDeleteConfirm = (id: string) => {
 		confirm({
@@ -130,89 +130,76 @@ const Products: React.FC = (props: Props) => {
 	];
 
 	return (
-		<>
-			<div className={cx("wrapper")}>
-				<Row gutter={[0, 0]}>
-					<Col
-						span="12"
-						style={{
-							display: "flex",
-							alignItems: "flex-end",
-						}}
-					>
-						<Space align="end">
-							<h2 className={cx("title")}>Tất Cả Sản Phẩm</h2>
-							<Tag
-								bordered={false}
-								style={{
-									backgroundColor: "#339af01a",
-								}}
-								icon={<BsPatchCheck color="#339af0" />}
-								className={cx("tag")}
-							>
-								<Link
-									to="/admin"
-									style={{ color: "#339af0" }}
-								>
-									thinkpro
-								</Link>
-							</Tag>
-						</Space>
-					</Col>
-					<Col
-						span="12"
-						style={{
-							display: "flex",
-							justifyContent: "flex-end",
-						}}
-					>
-						<Space split="|">
-							<Button
-								className={cx("btn")}
-								icon={<IoAddOutline />}
-								size="middle"
-								style={{
-									color: "#0abb87",
-									backgroundColor: "#0abb871a",
-									border: "none",
-								}}
-							>
-								<Link to="/admin/products/create">Thêm Mới</Link>
-							</Button>
-							<Button
-								className={cx("btn")}
-								icon={<AiOutlineDelete />}
-								size="middle"
-								style={{
-									color: "#fd397a",
-									backgroundColor: "#fd397a1a",
-									border: "none",
-								}}
-							>
-								<Link to="/admin/products/store">Thùng Rác{`(${count})`}</Link>
-							</Button>
-						</Space>
-					</Col>
-				</Row>
-				<Table
-					columns={columns}
-					dataSource={products as IProduct[]}
-					pagination={{
-						pageSize: paginate?.limit,
-						total: paginate?.totalDocs,
-						showSizeChanger: false,
-						onChange: async (page) => {
-							const { data } = await apiGetProducts(10, "desc", "createdAt", page);
-							emitData(data);
-						},
-					}}
-					rowKey={"_id"}
+		<div className={cx("wrapper", "wrapper--active")}>
+			<Row
+				gutter={[0, 0]}
+				style={{ padding: "16px 0 8px 0" }}
+			>
+				<Col
+					span="12"
 					style={{
-						marginTop: "16px",
+						display: "flex",
+						alignItems: "center",
 					}}
-				/>
-			</div>
-		</>
+				>
+					<Space align="end">
+						<h2 className={cx("title")}>Tất Cả Sản Phẩm</h2>
+					</Space>
+				</Col>
+				<Col
+					span="12"
+					style={{
+						display: "flex",
+						justifyContent: "flex-end",
+					}}
+				>
+					<Space split="|">
+						<Button
+							className={cx("btn")}
+							icon={<IoAddOutline />}
+							size="middle"
+							style={{
+								color: "#0abb87",
+								backgroundColor: "#0abb871a",
+								border: "none",
+							}}
+						>
+							<Link to="/admin/products/create">Thêm Mới</Link>
+						</Button>
+						<Button
+							className={cx("btn")}
+							icon={<AiOutlineDelete />}
+							size="middle"
+							style={{
+								color: "#fd397a",
+								backgroundColor: "#fd397a1a",
+								border: "none",
+							}}
+						>
+							<Link to="/admin/products/store">Thùng Rác{`(${count})`}</Link>
+						</Button>
+					</Space>
+				</Col>
+			</Row>
+			<Table
+				loading={loading}
+				columns={columns}
+				dataSource={products as IProduct[]}
+				pagination={{
+					pageSize: paginate?.limit,
+					total: paginate?.totalDocs,
+					showSizeChanger: false,
+					onChange: async (page) => {
+						const { data } = await apiGetProducts(10, "desc", "createdAt", page);
+						emitData(data);
+					},
+				}}
+				rowKey={"_id"}
+				style={{
+					marginTop: "16px",
+				}}
+			/>
+		</div>
 	);
 };
 

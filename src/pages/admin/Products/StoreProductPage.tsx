@@ -129,8 +129,11 @@ const StoreProductPage: React.FC = (props: Props) => {
 	];
 
 	return (
-		<>
-			<Row gutter={[0, 0]}>
+		<div className={cx("wrapper", "wrapper--active")}>
+			<Row
+				gutter={[0, 0]}
+				style={{ padding: "16px 0 8px 0" }}
+			>
 				<Col
 					span="12"
 					style={{
@@ -140,21 +143,6 @@ const StoreProductPage: React.FC = (props: Props) => {
 				>
 					<Space align="end">
 						<h2 className={cx("title")}>Thùng Rác</h2>
-						<Tag
-							bordered={false}
-							style={{
-								backgroundColor: "#339af01a",
-							}}
-							icon={<BsPatchCheck color="#339af0" />}
-							className={cx("tag")}
-						>
-							<Link
-								to="/admin"
-								style={{ color: "#339af0" }}
-							>
-								thinkpro
-							</Link>
-						</Tag>
 					</Space>
 				</Col>
 			</Row>
@@ -166,7 +154,7 @@ const StoreProductPage: React.FC = (props: Props) => {
 					marginTop: "16px",
 				}}
 			/>
-		</>
+		</div>
 	);
 };
 

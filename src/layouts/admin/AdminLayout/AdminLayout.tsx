@@ -5,9 +5,9 @@ import React from "react";
 import { AiOutlineHome, AiOutlineLogout } from "react-icons/ai";
 import { BiCategoryAlt } from "react-icons/bi";
 import { BsPhone } from "react-icons/bs";
+import { CiShoppingCart } from "react-icons/ci";
 import { FiSearch } from "react-icons/fi";
 import { IoIosNotificationsOutline } from "react-icons/io";
-import { IoSettingsOutline } from "react-icons/io5";
 import { TbBrandCake } from "react-icons/tb";
 import { NavLink, Outlet } from "react-router-dom";
 import styles from "./AdminLayout.module.scss";
@@ -36,11 +36,11 @@ function getItem(
 
 const items: MenuProps["items"] = [
 	getItem(<NavLink to="/admin">Dashboard</NavLink>, "1", <AiOutlineHome size="18px" />),
-	getItem(<NavLink to="/admin/products">Products</NavLink>, "2", <BsPhone size="18px" />),
-	getItem(<NavLink to="/admin/categories">Categories</NavLink>, "3", <BiCategoryAlt size="18px" />),
-	getItem(<NavLink to="/admin/brands">Brands</NavLink>, "4", <TbBrandCake size="18px" />),
-	getItem(<NavLink to="/admin/settings">Settings</NavLink>, "5", <IoSettingsOutline size="18px" />),
-	getItem(<NavLink to="/">Logout</NavLink>, "6", <AiOutlineLogout size="18px" />),
+	getItem(<NavLink to="/admin/products">Sản phẩm</NavLink>, "2", <BsPhone size="18px" />),
+	getItem(<NavLink to="/admin/categories">Danh mục</NavLink>, "3", <BiCategoryAlt size="18px" />),
+	getItem(<NavLink to="/admin/brands">Thương hiệu</NavLink>, "4", <TbBrandCake size="18px" />),
+	getItem(<NavLink to="/admin/orders">Đơn hàng</NavLink>, "5", <CiShoppingCart size="18px" />),
+	getItem(<NavLink to="/">Đăng xuất</NavLink>, "6", <AiOutlineLogout size="18px" />),
 ];
 
 const AdminLayout: React.FC = () => {

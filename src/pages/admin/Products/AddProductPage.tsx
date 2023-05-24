@@ -1,5 +1,11 @@
 import { ErrorMessage } from "@hookform/error-message";
-import { Button, Col, Form, Input, Modal, Row, Select, Space, Tag, TreeSelect, Upload, Radio } from "antd";
+import Highlight from "@tiptap/extension-highlight";
+import Image from "@tiptap/extension-image";
+import TaskItem from "@tiptap/extension-task-item";
+import TaskList from "@tiptap/extension-task-list";
+import { EditorContent, useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import { Button, Col, Form, Input, Modal, Radio, Row, Select, Space, Tag, TreeSelect, Upload } from "antd";
 import type { RcFile, UploadProps } from "antd/es/upload";
 import type { UploadFile } from "antd/es/upload/interface";
 import classNames from "classnames/bind";
@@ -7,24 +13,17 @@ import moment from "moment/moment";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { BsPatchCheck } from "react-icons/bs";
-import { IoAddOutline } from "react-icons/io5";
+import { IoIosArrowDown } from "react-icons/io";
+import { IoAddOutline, IoAddSharp, IoClose } from "react-icons/io5";
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import slugify from "react-slugify";
+import MenuBar from "~/components/MenuBar/MenuBar";
 import { IBrand, ICategory, IProduct } from "~/interfaces";
 import { getBrands as apiGetBrands } from "~/services/brandService";
 import { getCategories as apiGetCategories } from "~/services/categoryService";
 import productSchema from "~/validations/products";
-import styles from "./Products.module.scss";
-import { IoIosArrowDown } from "react-icons/io";
-import Highlight from "@tiptap/extension-highlight";
-import TaskItem from "@tiptap/extension-task-item";
-import TaskList from "@tiptap/extension-task-list";
-import { EditorContent, useEditor } from "@tiptap/react";
-import Image from "@tiptap/extension-image";
-import StarterKit from "@tiptap/starter-kit";
-import MenuBar from "~/components/MenuBar/MenuBar";
 import "./Products.module.scss";
-import { IoClose, IoAddSharp } from "react-icons/io5";
+import styles from "./Products.module.scss";
 
 const { Option } = Select;
 
@@ -152,21 +151,6 @@ const AddProductPage = (props: Props) => {
 				>
 					<Space align="end">
 						<h2 className={cx("title")}>Tạo Mới Sản Phẩm</h2>
-						<Tag
-							bordered={false}
-							style={{
-								backgroundColor: "#339af01a",
-							}}
-							icon={<BsPatchCheck color="#339af0" />}
-							className={cx("tag")}
-						>
-							<Link
-								to="/admin"
-								style={{ color: "#339af0" }}
-							>
-								thinkpro
-							</Link>
-						</Tag>
 					</Space>
 				</Col>
 			</Row>

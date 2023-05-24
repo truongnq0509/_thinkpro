@@ -1,9 +1,17 @@
 .wrapper {
-	padding: 8px 24px;
+	width: 100%;
+	margin: 8px 24px;
+
+	&--active {
+		padding: 8px 24px;
+		background-color: var(--bg-white);
+		border-radius: 6px;
+	}
 }
 
 .title {
 	font-weight: 400;
+	// margin: 16px 0;
 }
 
 .tag {

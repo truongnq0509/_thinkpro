@@ -28,6 +28,7 @@ const DefaultProductPage: React.FC = (props: Props): JSX.Element => {
 	useTitle("Thinkpro | Tất cả sản phẩm");
 
 	useEffect(() => {
+		setLoading(true);
 		const fetchApi = async (): Promise<void> => {
 			const [{ data: res1, paginate }, { data: res2 }] = await Promise.all([apiGetProducts(), apiGetStore()]);
 			// sản phẩm chưa bị xóa mềm
@@ -36,6 +37,7 @@ const DefaultProductPage: React.FC = (props: Props): JSX.Element => {
 			// sản phẩm đã bị xóa mềm
 			setStore(res2);
 			setCount(res2?.length);
+			setLoading(false);
 		};
 		fetchApi();
 	}, []);
