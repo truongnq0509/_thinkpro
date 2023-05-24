@@ -39,7 +39,7 @@ const Product = ({ product }: Props) => {
 				</div>
 				{(attributes?.length as any) > 0 && <hr className={cx("line")} />}
 				<div className={cx("product__specs")}>
-					{attributes?.map((item: any, index) => {
+					{attributes?.map((item: any, index: number) => {
 						if (index < 4) {
 							return (
 								<span key={index}>

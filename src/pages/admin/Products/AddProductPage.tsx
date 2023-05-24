@@ -485,7 +485,7 @@ const AddProductPage = (props: Props) => {
 														<Col span={11}>
 															<Controller
 																control={control}
-																name={`attributes[${index}].k`}
+																name={`attributes[${index}].k` as any}
 																render={({ field }) => (
 																	<Input
 																		{...field}
@@ -498,7 +498,7 @@ const AddProductPage = (props: Props) => {
 														<Col span={11}>
 															<Controller
 																control={control}
-																name={`attributes[${index}].v`}
+																name={`attributes[${index}].v` as any}
 																render={({ field }) => (
 																	<Input
 																		{...field}
