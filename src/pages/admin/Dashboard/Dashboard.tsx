@@ -30,7 +30,7 @@ const Dashboard = (props: Props) => {
 	const [dashboard, setDashboard] = useState<any>(null);
 	const [loading, setLoading] = useState<boolean>(false);
 
-	useTitle("Thinkpro | Tất cả đơn hàng");
+	useTitle("Thinkpro | Trang chủ");
 
 	useEffect(() => {
 		const fetchApi = async () => {

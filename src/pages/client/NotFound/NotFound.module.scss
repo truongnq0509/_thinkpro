@@ -1,0 +1,15 @@
+@use "../../../components/GlobalStyles/GlobalStyles.module.scss" as screen;
+
+.wrapper {
+	@include screen.xs {
+		margin: 0 16px;
+	}
+
+	@include screen.sm {
+		margin: 0 16px;
+	}
+
+	@include screen.md {
+		margin: 0;
+	}
+}
