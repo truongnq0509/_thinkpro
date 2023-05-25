@@ -64,6 +64,58 @@ const routes: RouteObject[] = [
 		element: <ThanksPage />,
 	},
 	{
+		path: "/admin",
+		element: (
+			<PrivateRouter roles={["editor", "admin"]}>
+				<AdminLayout />
+			</PrivateRouter>
+		),
+		children: [
+			{
+				index: true,
+				element: <DashboardPage />,
+			},
+			{
+				path: "products",
+				element: <DefaultProductPage />,
+				children: [
+					{
+						index: true,
+						element: <ProductManagerPage />,
+					},
+					{
+						path: "create",
+						element: <AddProductPage />,
+					},
+					{
+						path: "store",
+						element: <StoreProductPage />,
+					},
+					{
+						path: ":slug",
+						element: <UpdateProductPage />,
+					},
+				],
+			},
+			{
+				path: "categories",
+				element: <CategoriesManagerPage />,
+			},
+			{
+				path: "brands",
+				element: <BrandsManagerPage />,
+			},
+			{
+				path: "orders",
+				element: <OrdersManagerPage />,
+			},
+			{
+				path: "orders/:id",
+				element: <OrderDetailsPage />,
+			},
+		],
+	},
+	{
 		path: "/",
 		element: <DefaultLayout />,
 		children: [
@@ -122,58 +174,6 @@ const routes: RouteObject[] = [
 			{
 				path: "*",
 				element: <NotFoundPage />,
-			},
-		],
-	},
-	{
-		path: "/admin",
-		element: (
-			<PrivateRouter roles={["editor", "admin"]}>
-				<AdminLayout />
-			</PrivateRouter>
-		),
-		children: [
-			{
-				index: true,
-				element: <DashboardPage />,
-			},
-			{
-				path: "products",
-				element: <DefaultProductPage />,
-				children: [
-					{
-						index: true,
-						element: <ProductManagerPage />,
-					},
-					{
-						path: "create",
-						element: <AddProductPage />,
-					},
-					{
-						path: "store",
-						element: <StoreProductPage />,
-					},
-					{
-						path: ":slug",
-						element: <UpdateProductPage />,
-					},
-				],
-			},
-			{
-				path: "categories",
-				element: <CategoriesManagerPage />,
-			},
-			{
-				path: "brands",
-				element: <BrandsManagerPage />,
-			},
-			{
-				path: "orders",
-				element: <OrdersManagerPage />,
-			},
-			{
-				path: "orders/:id",
-				element: <OrderDetailsPage />,
 			},
 		],
 	},
