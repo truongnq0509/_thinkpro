@@ -88,6 +88,11 @@ const Header: React.FC = () => {
 										<Link to="/tai-khoan/don-mua">
 											<Button className={cx("btn")}>Đơn hàng</Button>
 										</Link>
+										{(user?.role == "admin " || user?.role == "editor") && (
+											<Link to="/admin">
+												<Button className={cx("btn")}>Quản trị</Button>
+											</Link>
+										)}
 										<Button
 											className={cx("btn")}
 											onClick={handleLogout}
